@@ -15,14 +15,14 @@ class BattleScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('background', 'assets/background.jpg');
+    this.load.image('background', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/background.jpg');
     this.load.image(`character_${this.player1.tokenId}`, this.player1.image);
     const player2TokenId = this.isComputerOpponent ? Math.floor(Math.random() * 1000) + 1 : this.player2.tokenId;
     this.load.image(`character_${player2TokenId}`, this.player2.image);
     
     // Load UI elements
-    this.load.image('card', 'assets/card.png');
-    this.load.image('mana_orb', 'assets/mana_orb.png');
+    this.load.image('card', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/card.png');
+    this.load.image('mana_orb', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/mana_orb.png');
   }
 
   create() {

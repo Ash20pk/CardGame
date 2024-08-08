@@ -16,7 +16,7 @@ function HomePage() {
     const [playerNFTs, setPlayerNFTs] = useState([]);
     const [playerName, setPlayerName] = useState('');
     const [selectedNFT, setSelectedNFT] = useState(null);
-    const [playerCharacter, setPlayerCharacter] = useState(null);
+    const [playerLevel, setPlayerLevel] = useState('');
     const [characterStats, setCharacterStats] = useState(null);
     const [currentSlide, setCurrentSlide] = useState(0);
     const {connectWallet, disconnectWallet, account, signer, isConnected} = useWallet();
@@ -163,6 +163,7 @@ function HomePage() {
         try {
             const player = await gameContract.players(account);
             setPlayerName(player[0]);
+            setPlayerLevel(player[4]);
             await fetchPlayerNFTs();
         } catch (error) {
             console.error("Error fetching player data:", error);
@@ -225,7 +226,7 @@ function HomePage() {
     const joinBattle = async (_battleID, _player1, _startTime, _player1TokenID) => {
       const battleData = {
         id: _battleID,
-        player1: {name: playerName, address: _player1, tokenId: _player1TokenID, image: selectedNFT.image},
+        player1: {name: playerName, address: _player1, tokenId: _player1TokenID, image: selectedNFT.image, class: selectedNFT.class, level: playerLevel, health: characterStats.baseHealth, mana: characterStats.baseMana },
         player2: {address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: null, image: playerNFTs[0].image},
         startTime: _startTime,
         status: 'ready'

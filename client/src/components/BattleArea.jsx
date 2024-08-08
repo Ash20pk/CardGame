@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, VStack, Heading, Text } from '@chakra-ui/react';
+import { Box, VStack, Heading, Text, Button, Flex } from '@chakra-ui/react';
+import { FaExpand, FaCompress } from 'react-icons/fa';
 import BattleGame from './BattleGame';
 import useWallet from '../components/ConnectWallet';
 import CardBattleGame from '../artifacts/CardBattleGame.json';
@@ -10,10 +11,10 @@ const BattleArea = () => {
   const { battleId } = useParams();
   const [battleData, setBattleData] = useState(null);
   const { account, signer } = useWallet();
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const gameContractAddress = process.env.VITE_GAME_CONTRACT;
   const contract = new ethers.Contract(gameContractAddress, CardBattleGame.abi, signer);
-
 
   useEffect(() => {
     const battleData = JSON.parse(localStorage.getItem(`battle_${battleId}`));
@@ -24,45 +25,52 @@ const BattleArea = () => {
     }
   }, [battleId]);
 
-
   const handleBattleEnd = async (battleId, winner, expGained) => {
-    await contract.resolveBattle(
-      battleId,
-      battleData.player2.address,
-      battleData.player1.tokenId,
-      battleData.player2.tokenId,
-      winner,
-      expGained,
-      Math.floor(expGained / 2),
-      // Add signature parameters here
-    );
+    // ... (keep your existing handleBattleEnd logic)
+  };
 
-    // Update battle status in localStorage
-    const battleData = JSON.parse(localStorage.getItem(`battle_${battleId}`));
-    battleData.status = 'completed';
-    battleData.winner = winner;
-    battleData.expGained = expGained;
-    localStorage.setItem(`battle_${battleId}`, JSON.stringify(battleData));
-
-    // Navigate to result page or update UI
-    // navigation('/battle-result', { state: { battleId } });
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
   };
 
   if (!battleData) return <Text>Loading...</Text>;
 
   return (
-    <VStack spacing={4} align="stretch">
-      <Heading>Battle Arena</Heading>
-      <Text>{`Battle ID: ${battleId}`}</Text>
-      <Text>{`${battleData.player1.name} vs Computer`}</Text>
-      <Box borderWidth={1} borderRadius="lg" overflow="hidden" p={4}>
-        <BattleGame
-          battleId={battleId}
-          player1={battleData.player1}
-          player2={battleData.player2}
-          isComputerOpponent={true}
-          onBattleEnd={handleBattleEnd}
-        />
+    <VStack spacing={4} align="stretch" h="100vh">
+      <Flex justify="space-between" align="center" p={4}>
+        <VStack align="start" spacing={2}>
+          <Heading>Battle Arena</Heading>
+          <Text>{`Battle ID: ${battleId}`}</Text>
+          <Text>{`${battleData.player1.name} vs Computer`}</Text>
+        </VStack>
+        <Button leftIcon={isFullscreen ? <FaCompress /> : <FaExpand />} onClick={toggleFullscreen}>
+          {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+        </Button>
+      </Flex>
+      <Box flex={1} display="flex" justifyContent="center" alignItems="center">
+      <Box 
+          width={["100%", "80%", "70%", "60%"]} 
+          height={["100%", "80vh"]} 
+          borderWidth={1} 
+          borderRadius="lg" 
+          overflow="hidden"
+        >
+          <BattleGame
+            battleId={battleId}
+            player1={battleData.player1}
+            player2={battleData.player2}
+            isComputerOpponent={true}
+            onBattleEnd={handleBattleEnd}
+          />
+        </Box>
       </Box>
     </VStack>
   );

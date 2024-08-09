@@ -44,23 +44,13 @@ const BattleArea = () => {
   if (!battleData) return <Text>Loading...</Text>;
 
   return (
-    <VStack spacing={4} align="stretch" h="100vh">
-      <Flex justify="space-between" align="center" p={4}>
-        <VStack align="start" spacing={2}>
-          <Heading>Battle Arena</Heading>
-          <Text>{`Battle ID: ${battleId}`}</Text>
-          <Text>{`${battleData.player1.name} vs Computer`}</Text>
-        </VStack>
-        <Button leftIcon={isFullscreen ? <FaCompress /> : <FaExpand />} onClick={toggleFullscreen}>
-          {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-        </Button>
-      </Flex>
       <Box flex={1} display="flex" justifyContent="center" alignItems="center">
       <Box 
-          width={["100%", "80%", "70%", "60%"]} 
-          height={["100%", "80vh"]} 
+          // width={["100%", "80%", "70%", "60%"]} 
+          // height={["100%", "80vh"]} 
           borderWidth={1} 
           borderRadius="lg" 
+          position="relative"  
           overflow="hidden"
         >
           <BattleGame
@@ -72,7 +62,6 @@ const BattleArea = () => {
           />
         </Box>
       </Box>
-    </VStack>
   );
 };
 

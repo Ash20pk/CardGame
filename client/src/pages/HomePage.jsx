@@ -224,13 +224,15 @@ function HomePage() {
     };
 
     const joinBattle = async (_battleID, _player1, _startTime, _player1TokenID) => {
+      const player2stats = await fetchCharacterStats(playerNFTs[0].class)
       const battleData = {
         id: _battleID,
-        player1: {name: playerName, address: _player1, tokenId: _player1TokenID, image: selectedNFT.image, class: selectedNFT.class, level: playerLevel, health: characterStats.baseHealth, mana: characterStats.baseMana },
-        player2: {address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: null, image: playerNFTs[0].image},
+        player1: {name: playerName, address: _player1, tokenId: _player1TokenID, image: selectedNFT.image, class: selectedNFT.class, level: playerLevel.toString(), health: characterStats.baseHealth, mana: characterStats.baseMana },
+        player2: {address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: null, image: playerNFTs[0].image, health: player2stats.baseHealth, mana: player2stats.baseMana, class: playerNFTs[0].class},
         startTime: _startTime,
         status: 'ready'
       };
+      console.log(battleData)
       localStorage.setItem(`battle_${_battleID}`, JSON.stringify(battleData));
       navigate(`/battle/${_battleID}`);
     };

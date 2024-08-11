@@ -140,8 +140,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       }
   
       function initializeGameState() {
-        console.log(player1, player2)
-        return {
+        const initialState = {
           player1: {
             ...player1,
             health: player1.health,
@@ -163,7 +162,15 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           turnPlayer: 'player1',
           actionLog: [],
           roundNumber: 1,
+          prevPlayer1State: null,
+          prevPlayer2State: null
         };
+      
+        // Set initial previous states
+        initialState.prevPlayer1State = { ...initialState.player1 };
+        initialState.prevPlayer2State = { ...initialState.player2 };
+      
+        return initialState;
       }
 
       function createPlayerCard(scene, x, y, player, imageKey, scaleRatio) {
@@ -212,13 +219,31 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           stroke: '#000',
           strokeThickness: 1 * scaleRatio
         });
+
+        // Add change indicators
+        const healthChange = scene.add.text(40 * scaleRatio, 50 * scaleRatio, '', {
+          fontSize: `${14 * scaleRatio}px`,
+          fill: '#00ff00'
+        });
+        const manaChange = scene.add.text(40 * scaleRatio, 65 * scaleRatio, '', {
+          fontSize: `${14 * scaleRatio}px`,
+          fill: '#00ff00'
+        });
+        const shieldChange = scene.add.text(40 * scaleRatio, 80 * scaleRatio, '', {
+          fontSize: `${14 * scaleRatio}px`,
+          fill: '#00ff00'
+        });
   
-        card.add([characterImage, frame, nameText, healthText, manaText, shieldText]);
+        card.add([characterImage, frame, nameText, healthText, manaText, shieldText, healthChange, manaChange, shieldChange]);
         
         // Store references to update later
         card.healthText = healthText;
         card.manaText = manaText;
         card.shieldText = shieldText;
+        card.healthChange = healthChange;
+        card.manaChange = manaChange;
+        card.shieldChange = shieldChange;
+
   
         return card;
       }
@@ -318,6 +343,10 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
 
     function executeAction(power, attacker, defender, powerIndex) {
       if (attacker.mana < power.manaCost || attacker.cooldowns[powerIndex] > 0) return;
+
+      // Update previous states
+      gameState.prevPlayer1State = { ...gameState.player1 };
+      gameState.prevPlayer2State = { ...gameState.player2 };
 
       attacker.mana -= power.manaCost;
       attacker.cooldowns[powerIndex] = power.cooldown || 0;
@@ -446,17 +475,21 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function endTurn() {
+      // Update previous states
+      gameState.prevPlayer1State = { ...gameState.player1 };
+      gameState.prevPlayer2State = { ...gameState.player2 };
+    
       gameState.turnPlayer = gameState.turnPlayer === 'player1' ? 'player2' : 'player1';
       gameState.currentTurn++;
-
+    
       if (gameState.turnPlayer === 'player1') {
         gameState.roundNumber++;
       }
-
+    
       replenishMana();
       updateUI();
       saveGameState();
-
+    
       if (gameState.turnPlayer === 'player2' && isComputerOpponent) {
         setTimeout(computerTurn, 1500);
       }
@@ -468,17 +501,56 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function updateUI() {
-      updatePlayerCard(player1Card, gameState.player1);
-      updatePlayerCard(player2Card, gameState.player2);
+      updatePlayerCard(player1Card, gameState.player1, gameState.prevPlayer1State);
+      updatePlayerCard(player2Card, gameState.player2, gameState.prevPlayer2State);
       updateTurnText();
       updateActionButtons();
       updateActionLog();
+    
+      // After updating, set current state as previous state for next update
+      gameState.prevPlayer1State = { ...gameState.player1 };
+      gameState.prevPlayer2State = { ...gameState.player2 };
     }
 
-    function updatePlayerCard(card, player) {
+    function updatePlayerCard(card, player, prevState) {
+      const healthDiff = player.health - prevState.health;
+      const manaDiff = player.mana - prevState.mana;
+      const shieldDiff = player.shield - prevState.shield;
+    
       card.healthText.setText(`HP: ${player.health}`);
       card.manaText.setText(`MP: ${player.mana}`);
       card.shieldText.setText(`Shield: ${player.shield}`);
+    
+      if (healthDiff !== 0) {
+        card.healthChange.setText(healthDiff > 0 ? `+${healthDiff}` : healthDiff);
+        card.healthChange.setFill(healthDiff > 0 ? '#00ff00' : '#ff0000');
+        fadeOutText(card.scene, card.healthChange);
+      }
+    
+      if (manaDiff !== 0) {
+        card.manaChange.setText(manaDiff > 0 ? `+${manaDiff}` : manaDiff);
+        card.manaChange.setFill(manaDiff > 0 ? '#00ff00' : '#ff0000');
+        fadeOutText(card.scene, card.manaChange);
+      }
+    
+      if (shieldDiff !== 0) {
+        card.shieldChange.setText(shieldDiff > 0 ? `+${shieldDiff}` : shieldDiff);
+        card.shieldChange.setFill(shieldDiff > 0 ? '#00ff00' : '#ff0000');
+        fadeOutText(card.scene, card.shieldChange);
+      }
+    }
+    
+    function fadeOutText(scene, text) {
+      scene.tweens.add({
+        targets: text,
+        alpha: 0,
+        duration: 3000,
+        ease: 'Power2',
+        onComplete: () => {
+          text.setText('');
+          text.alpha = 1;
+        }
+      });
     }
 
     function updateTurnText() {

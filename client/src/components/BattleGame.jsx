@@ -172,7 +172,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         const circleRadius = 45 * scaleRatio; // Increase the circle size
         const imageY = 500 * scaleRatio; // Adjust vertical position of the image
         
-        const frameMask = scene.make.image({ x: x, y: y, key: 'card_mask', add: false }).setScale(0.5 * scaleRatio);
+        const frameMask = scene.make.image({ x: x+185, y: y+20, key: 'card_mask', add: false }).setScale(0.5 * scaleRatio);
 
         const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
         
@@ -212,7 +212,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 1 * scaleRatio
         });
   
-        card.add([characterImage,frame, nameText, healthText, manaText, shieldText]);
+        card.add([characterImage, frame, nameText, healthText, manaText, shieldText]);
+        // card.mask = mask;
         
         // Store references to update later
         card.healthText = healthText;

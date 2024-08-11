@@ -99,25 +99,25 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         const width = this.scale.width;
         const height = this.scale.height;
         const scaleRatio = Math.min(width / 1024, height / 768);
-  
+      
         this.add.image(width / 2, height / 2, 'background').setDisplaySize(width, height);
-  
+      
         createAnimations(this);
-  
+      
         gameState = loadGameState() || initializeGameState();
-
-        player1Card = createPlayerCard(this, width * 0.5, height * 0.75, gameState.player1, 'player1_image', 'bottom', scaleRatio);
-        player2Card = createPlayerCard(this, width * 0.5, height * 0.25, gameState.player2, 'player2_image', 'top', scaleRatio);
-  
+      
+        player1Card = createPlayerCard(this, width * 0.25, height * 0.5, gameState.player1, 'player1_image', scaleRatio);
+        player2Card = createPlayerCard(this, width * 0.75, height * 0.5, gameState.player2, 'player2_image', scaleRatio);
+        
         turnText = createTurnText(this, width, height, scaleRatio);
-        actionLogText = createActionLogText(this, width, height, scaleRatio);
+        actionLogText = createActionLogCard(this, width * 0.5, height * 0.5, scaleRatio);
         actionButtons = createActionButtons(this, width, height, scaleRatio);
-  
+      
         animationLayer = this.add.container(0, 0);
-  
+      
         updateUI();
         saveGameState();
-  
+      
         this.scale.on('resize', (gameSize) => resize(this, gameSize));
       }
 
@@ -164,15 +164,14 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         };
       }
 
-      function createPlayerCard(scene, x, y, player, imageKey, position, scaleRatio) {
+      function createPlayerCard(scene, x, y, player, imageKey, scaleRatio) {
         const card = scene.add.container(x, y);
         const frame = scene.add.image(0, 0, 'card_frame').setScale(0.5 * scaleRatio);
         
         // Adjust these values to fit the image within the card frame
         const circleRadius = 45 * scaleRatio; // Increase the circle size
-        const imageY = 500 * scaleRatio; // Adjust vertical position of the image
         
-        const frameMask = scene.make.image({ x: x+185, y: y+20, key: 'card_mask', add: false }).setScale(0.5 * scaleRatio);
+        const frameMask = scene.make.image({ x: x + 185, y: y + 20, key: 'card_mask', add: false }).setScale(0.5 * scaleRatio);
 
         const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
         
@@ -212,7 +211,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 1 * scaleRatio
         });
   
-        card.add([frameMask,characterImage, frame, nameText, healthText, manaText, shieldText]);
+        card.add([characterImage, frame, nameText, healthText, manaText, shieldText]);
         
         // Store references to update later
         card.healthText = healthText;
@@ -231,14 +230,29 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         }).setOrigin(0.5);
       }
   
-      function createActionLogText(scene, width, height, scaleRatio) {
-        return scene.add.text(width / 2, height * 0.5, '', {
+      function createActionLogCard(scene, x, y, scaleRatio) {
+        const card = scene.add.container(x, y);
+        const frame = scene.add.image(0, 0, 'card_frame').setScale(0.6 * scaleRatio);
+      
+        const titleText = scene.add.text(0, -80 * scaleRatio, 'Battle Log', {
           fontSize: `${24 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
-          strokeThickness: 4 * scaleRatio,
-          align: 'center'
+          strokeThickness: 4 * scaleRatio
         }).setOrigin(0.5);
+      
+        const logText = scene.add.text(0, 0, '', {
+          fontSize: `${16 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 2 * scaleRatio,
+          align: 'center',
+          wordWrap: { width: 300 * scaleRatio }
+        }).setOrigin(0.5);
+      
+        card.add([frame, titleText, logText]);
+        
+        return logText;
       }
   
       function createActionButtons(scene, width, height, scaleRatio) {
@@ -269,22 +283,23 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         const width = gameSize.width;
         const height = gameSize.height;
         const scaleRatio = Math.min(width / 1024, height / 768);
-  
+      
         scene.cameras.resize(width, height);
-  
+      
         if (player1Card && player2Card) {
-          player1Card.setPosition(width * 0.5, height * 0.75);
-          player2Card.setPosition(width * 0.5, height * 0.25);
+          player1Card.setPosition(width * 0.25, height * 0.5);
+          player2Card.setPosition(width * 0.75, height * 0.5);
         }
-  
+      
         if (turnText) {
           turnText.setPosition(width / 2, height * 0.1).setFontSize(`${36 * scaleRatio}px`);
         }
-  
+      
         if (actionLogText) {
-          actionLogText.setPosition(width / 2, height * 0.5).setFontSize(`${24 * scaleRatio}px`);
+          actionLogText.parentContainer.setPosition(width * 0.5, height * 0.5);
+          actionLogText.setFontSize(`${16 * scaleRatio}px`);
         }
-  
+      
         if (actionButtons) {
           actionButtons.forEach((button, index) => {
             button.setPosition(width * ((index + 1) / (actionButtons.length + 1)), height * 0.9).setFontSize(`${20 * scaleRatio}px`);

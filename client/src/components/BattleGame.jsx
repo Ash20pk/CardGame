@@ -86,6 +86,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('card_frame', 'assets/card.png');
         this.load.image('card_mask', 'assets/card_mask.png');
         this.load.image('card_mask_1', 'assets/card_mask_1.png');
+        this.load.image('battle_log', 'assets/oldpage.png');
         this.load.image('player1_image', player1.image);
         this.load.image('player2_image', player2.image);
         this.load.spritesheet('attack_effect', 'assets/attack_spritesheet.jpg', {
@@ -233,19 +234,19 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
   
       function createActionLogCard(scene, x, y, scaleRatio) {
         const card = scene.add.container(x, y);
-        const frame = scene.add.image(0, 0, 'card_frame').setScale(0.6 * scaleRatio);
+        const frame = scene.add.image(0, 0, 'battle_log').setScale(0.305 * scaleRatio);
       
-        const titleText = scene.add.text(0, -80 * scaleRatio, 'Battle Log', {
+        const titleText = scene.add.text(0, -100 * scaleRatio, 'Battle Log', {
           fontSize: `${24 * scaleRatio}px`,
-          fill: '#fff',
-          stroke: '#000',
+          fill: '#000',
+          stroke: '#fff',
           strokeThickness: 4 * scaleRatio
         }).setOrigin(0.5);
       
         const logText = scene.add.text(0, 0, '', {
           fontSize: `${16 * scaleRatio}px`,
-          fill: '#fff',
-          stroke: '#000',
+          fill: '#000',
+          stroke: '#fff',
           strokeThickness: 2 * scaleRatio,
           align: 'center',
           wordWrap: { width: 300 * scaleRatio }

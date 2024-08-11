@@ -78,18 +78,20 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           ]
         }
       };
-  
+
+      
       function preload() {
+        this.load.setBaseURL('https://card-game-eosin.vercel.app/');
         this.load.image('background', 'assets/background.jpg');
-        this.load.image('card_frame', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/card.png');
+        this.load.image('card_frame', 'assets/card.png');
         this.load.image('player1_image', player1.image);
         this.load.image('player2_image', player2.image);
-        this.load.spritesheet('attack_effect', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/attack_spritesheet.jpg', {
+        this.load.spritesheet('attack_effect', 'assets/attack_spritesheet.jpg', {
           frameWidth: 70,
           frameHeight: 128
         });
-        this.load.image('defend_effect', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/attack_spritesheet.jpg');
-        this.load.image('special_effect', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/attack_spritesheet.jpg');
+        this.load.image('defend_effect', 'assets/attack_spritesheet.jpg');
+        this.load.image('special_effect', 'assets/attack_spritesheet.jpg');
       }
   
       function create() {
@@ -102,7 +104,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         createAnimations(this);
   
         gameState = loadGameState() || initializeGameState();
-  
+
         player1Card = createPlayerCard(this, width * 0.5, height * 0.75, gameState.player1, 'player1_image', 'bottom', scaleRatio);
         player2Card = createPlayerCard(this, width * 0.5, height * 0.25, gameState.player2, 'player2_image', 'top', scaleRatio);
   
@@ -117,7 +119,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
   
         this.scale.on('resize', (gameSize) => resize(this, gameSize));
       }
-      
+
       function createAnimations(scene) {
         scene.anims.create({
           key: 'attack_top',
@@ -165,32 +167,24 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         const card = scene.add.container(x, y);
         const frame = scene.add.image(0, 0, 'card_frame').setScale(0.5 * scaleRatio);
         
-        // Create a container for the character image
-        const imageContainer = scene.add.container(100, -30 * scaleRatio);
-        const circleRadius = 45 * scaleRatio;
+        // Adjust these values to fit the image within the card frame
+        const circleRadius = 45 * scaleRatio; // Increase the circle size
+        const imageY = 500 * scaleRatio; // Adjust vertical position of the image
         
-        // Create a circular shape for the blend mask
-        const circle = scene.add.circle(300, 300, 480, 0x000000).setVisible(false);
-        // circle.fillStyle(0xffffff, 1);
-        // circle.fillCircle(0, 0, circleRadius);
+        const frameMask = scene.make.image({ x: x, y: y, key: 'card_frame', add: false }).setScale(0.5 * scaleRatio);
+
+        const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
+
+        frame.mask = mask;
         
-        // Add the character image
-        const characterImage = scene.add.image(0, 0, imageKey).setBlendMode(Phaser.BlendModes.NORMAL);
-        characterImage.setDisplaySize(circleRadius * 6, circleRadius * 6);
+        // Add the character image 
+        const characterImage = scene.add.image(100, -40, imageKey);
+        characterImage.setDisplaySize(circleRadius * 6, circleRadius * 5);
+        // characterImage.mask = mask;
         characterImage.setOrigin(0.5);
-        
-        // Apply the blend mask
-        // characterImage.setMask(circle.createGeometryMask());
-        
-        // Add a border around the circular image
-        const border = scene.add.graphics();
-        border.strokeCircle(0, 0, circleRadius);
-        
-        imageContainer.add([circle, characterImage, border])
-        card.add(imageContainer)
-        
+              
         // Add name on the ribbon
-        const nameText = scene.add.text(0, 55 * scaleRatio, player.name, {
+        const nameText = scene.add.text(10, 10 * scaleRatio, player.name, {
           fontSize: `${16 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
@@ -198,28 +192,28 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         }).setOrigin(0.5);
   
         // Add stats to the card
-        const healthText = scene.add.text(-40 * scaleRatio, 20 * scaleRatio, `HP: ${player.health}`, {
+        const healthText = scene.add.text(-40 * scaleRatio, 50 * scaleRatio, `HP: ${player.health}`, {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
           strokeThickness: 1 * scaleRatio
         });
         
-        const manaText = scene.add.text(-40 * scaleRatio, 35 * scaleRatio, `MP: ${player.mana}`, {
+        const manaText = scene.add.text(-40 * scaleRatio, 65 * scaleRatio, `MP: ${player.mana}`, {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
           strokeThickness: 1 * scaleRatio
         });
         
-        const shieldText = scene.add.text(-40 * scaleRatio, 50 * scaleRatio, `Shield: ${player.shield}`, {
+        const shieldText = scene.add.text(-40 * scaleRatio, 80 * scaleRatio, `Shield: ${player.shield}`, {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
           strokeThickness: 1 * scaleRatio
         });
   
-        card.add([frame, nameText, healthText, manaText, shieldText]);
+        card.add([characterImage,frame, nameText, healthText, manaText, shieldText]);
         
         // Store references to update later
         card.healthText = healthText;

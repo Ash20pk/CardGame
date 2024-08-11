@@ -85,6 +85,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('background', 'assets/background.jpg');
         this.load.image('card_frame', 'assets/card.png');
         this.load.image('card_mask', 'assets/card_mask.png');
+        this.load.image('card_mask_1', 'assets/card_mask_1.png');
         this.load.image('player1_image', player1.image);
         this.load.image('player2_image', player2.image);
         this.load.spritesheet('attack_effect', 'assets/attack_spritesheet.jpg', {
@@ -171,7 +172,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         // Adjust these values to fit the image within the card frame
         const circleRadius = 45 * scaleRatio; // Increase the circle size
         
-        const frameMask = scene.make.image({ x: x + 185, y: y + 20, key: 'card_mask', add: false }).setScale(0.5 * scaleRatio);
+        const frameMask = scene.make.image({ x: x + 185, y: y + 20, key: 'card_mask_1', add: false }).setScale(0.5 * scaleRatio);
 
         const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
         

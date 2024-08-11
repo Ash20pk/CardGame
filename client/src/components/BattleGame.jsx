@@ -212,8 +212,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 1 * scaleRatio
         });
   
-        card.add([characterImage, frame, nameText, healthText, manaText, shieldText]);
-        // card.mask = mask;
+        card.add([frameMask,characterImage, frame, nameText, healthText, manaText, shieldText]);
         
         // Store references to update later
         card.healthText = healthText;

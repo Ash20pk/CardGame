@@ -84,6 +84,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.setBaseURL('https://card-game-eosin.vercel.app/');
         this.load.image('background', 'assets/background.jpg');
         this.load.image('card_frame', 'assets/card.png');
+        this.load.image('card_mask', 'assets/card_mask.png');
         this.load.image('player1_image', player1.image);
         this.load.image('player2_image', player2.image);
         this.load.spritesheet('attack_effect', 'assets/attack_spritesheet.jpg', {
@@ -171,16 +172,14 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         const circleRadius = 45 * scaleRatio; // Increase the circle size
         const imageY = 500 * scaleRatio; // Adjust vertical position of the image
         
-        const frameMask = scene.make.image({ x: x, y: y, key: 'card_frame', add: false }).setScale(0.5 * scaleRatio);
+        const frameMask = scene.make.image({ x: x, y: y, key: 'card_mask', add: false }).setScale(0.5 * scaleRatio);
 
         const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
-
-        frame.mask = mask;
         
         // Add the character image 
         const characterImage = scene.add.image(100, -40, imageKey);
         characterImage.setDisplaySize(circleRadius * 6, circleRadius * 5);
-        // characterImage.mask = mask;
+        characterImage.mask = mask;
         characterImage.setOrigin(0.5);
               
         // Add name on the ribbon

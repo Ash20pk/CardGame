@@ -80,11 +80,10 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       };
   
       function preload() {
-        this.load.image('background', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/background.jpg');
+        this.load.image('background', 'assets/background.jpg');
         this.load.image('card_frame', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/card.png');
-        console.log(player1.image, player2.image);
-        this.load.image('player1', player1.image);
-        this.load.image('player2', player2.image);
+        this.load.image('player1_image', player1.image);
+        this.load.image('player2_image', player2.image);
         this.load.spritesheet('attack_effect', 'https://raw.githubusercontent.com/Ash20pk/CardGame/main/client/src/assets/attack_spritesheet.jpg', {
           frameWidth: 70,
           frameHeight: 128
@@ -104,8 +103,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
   
         gameState = loadGameState() || initializeGameState();
   
-        player1Card = createPlayerCard(this, width * 0.5, height * 0.3, gameState.player1, 'top', scaleRatio);
-        player2Card = createPlayerCard(this, width * 0.5, height * 0.75, gameState.player2, 'bottom', scaleRatio);
+        player1Card = createPlayerCard(this, width * 0.5, height * 0.75, gameState.player1, 'player1_image', 'bottom', scaleRatio);
+        player2Card = createPlayerCard(this, width * 0.5, height * 0.25, gameState.player2, 'player2_image', 'top', scaleRatio);
   
         turnText = createTurnText(this, width, height, scaleRatio);
         actionLogText = createActionLogText(this, width, height, scaleRatio);
@@ -118,7 +117,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
   
         this.scale.on('resize', (gameSize) => resize(this, gameSize));
       }
-  
+      
       function createAnimations(scene) {
         scene.anims.create({
           key: 'attack_top',
@@ -162,159 +161,143 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         };
       }
 
-      function createPlayerCard(scene, x, y, player, position, scaleRatio) {
+      function createPlayerCard(scene, x, y, player, imageKey, position, scaleRatio) {
         const card = scene.add.container(x, y);
         const frame = scene.add.image(0, 0, 'card_frame').setScale(0.5 * scaleRatio);
         
-        // Load player image dynamically
-        scene.load.once('complete', () => {
-          const portrait = scene.add.image(0, -30 * scaleRatio, `player_${player.name}`).setScale(0.15 * scaleRatio);
-          card.add(portrait);
-        });
-        scene.load.image(`player_${player.name}`, player.image);
-        scene.load.start();
-      
-        const nameText = scene.add.text(0, 40 * scaleRatio, player.name, { 
-          fontSize: `${16 * scaleRatio}px`, 
-          fill: '#fff',
-          stroke: '#000',
-          strokeThickness: 2 * scaleRatio
-        }).setOrigin(0.5);
-      
-        const classText = scene.add.text(0, 60 * scaleRatio, player.class.name, { 
-          fontSize: `${14 * scaleRatio}px`, 
-          fill: '#fff',
-          stroke: '#000',
-          strokeThickness: 2 * scaleRatio
-        }).setOrigin(0.5);
-      
-        // Create bars for health, mana, and shield
-        const barWidth = 80 * scaleRatio;
-        const barHeight = 10 * scaleRatio;
-        const barSpacing = 15 * scaleRatio;
-        const barY = position === 'top' ? 90 * scaleRatio : -90 * scaleRatio;
-      
-        // Health bar
-        const healthBar = scene.add.rectangle(-40 * scaleRatio, barY, barWidth, barHeight, 0xff0000).setOrigin(0, 0.5);
-        const healthText = scene.add.text(0, barY, 'HP: 100', { 
-          fontSize: `${10 * scaleRatio}px`, 
-          fill: '#fff',
-          stroke: '#000',
-          strokeThickness: 1 * scaleRatio
-        }).setOrigin(0.5, 0.5);
-      
-        // Mana bar
-        const manaBar = scene.add.rectangle(-40 * scaleRatio, barY + barSpacing, barWidth, barHeight, 0x0000ff).setOrigin(0, 0.5);
-        const manaText = scene.add.text(0, barY + barSpacing, 'MP: 100', { 
-          fontSize: `${10 * scaleRatio}px`, 
-          fill: '#fff',
-          stroke: '#000',
-          strokeThickness: 1 * scaleRatio
-        }).setOrigin(0.5, 0.5);
-      
-        // Shield bar
-        const shieldBar = scene.add.rectangle(-40 * scaleRatio, barY + barSpacing * 2, barWidth, barHeight, 0xffff00).setOrigin(0, 0.5);
-        const shieldText = scene.add.text(0, barY + barSpacing * 2, 'Shield: 0', { 
-          fontSize: `${10 * scaleRatio}px`, 
-          fill: '#fff',
-          stroke: '#000',
-          strokeThickness: 1 * scaleRatio
-        }).setOrigin(0.5, 0.5);
-      
-        // Power bar (Dota style)
-        const powerBarY = position === 'top' ? 130 * scaleRatio : -130 * scaleRatio;
-        const powerBar = scene.add.container(0, powerBarY);
+        // Create a container for the character image
+        const imageContainer = scene.add.container(100, -30 * scaleRatio);
+        const circleRadius = 45 * scaleRatio;
         
-        player.class.powers.forEach((power, index) => {
-          const powerIcon = scene.add.rectangle((index - 1) * 30 * scaleRatio, 0, 25 * scaleRatio, 25 * scaleRatio, 0x4b0082);
-          const powerText = scene.add.text((index - 1) * 30 * scaleRatio, 0, power.name[0], {
-            fontSize: `${12 * scaleRatio}px`,
-            fill: '#fff',
-          }).setOrigin(0.5);
-          powerBar.add([powerIcon, powerText]);
+        // Create a circular shape for the blend mask
+        const circle = scene.add.circle(300, 300, 480, 0x000000).setVisible(false);
+        // circle.fillStyle(0xffffff, 1);
+        // circle.fillCircle(0, 0, circleRadius);
+        
+        // Add the character image
+        const characterImage = scene.add.image(0, 0, imageKey).setBlendMode(Phaser.BlendModes.NORMAL);
+        characterImage.setDisplaySize(circleRadius * 6, circleRadius * 6);
+        characterImage.setOrigin(0.5);
+        
+        // Apply the blend mask
+        // characterImage.setMask(circle.createGeometryMask());
+        
+        // Add a border around the circular image
+        const border = scene.add.graphics();
+        border.strokeCircle(0, 0, circleRadius);
+        
+        imageContainer.add([circle, characterImage, border])
+        card.add(imageContainer)
+        
+        // Add name on the ribbon
+        const nameText = scene.add.text(0, 55 * scaleRatio, player.name, {
+          fontSize: `${16 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 2 * scaleRatio
+        }).setOrigin(0.5);
+  
+        // Add stats to the card
+        const healthText = scene.add.text(-40 * scaleRatio, 20 * scaleRatio, `HP: ${player.health}`, {
+          fontSize: `${14 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 1 * scaleRatio
         });
-      
-        card.add([frame, nameText, classText, healthBar, manaBar, shieldBar, healthText, manaText, shieldText, powerBar]);
-        card.healthBar = healthBar;
-        card.manaBar = manaBar;
-        card.shieldBar = shieldBar;
+        
+        const manaText = scene.add.text(-40 * scaleRatio, 35 * scaleRatio, `MP: ${player.mana}`, {
+          fontSize: `${14 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 1 * scaleRatio
+        });
+        
+        const shieldText = scene.add.text(-40 * scaleRatio, 50 * scaleRatio, `Shield: ${player.shield}`, {
+          fontSize: `${14 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 1 * scaleRatio
+        });
+  
+        card.add([frame, nameText, healthText, manaText, shieldText]);
+        
+        // Store references to update later
         card.healthText = healthText;
         card.manaText = manaText;
         card.shieldText = shieldText;
-      
+  
         return card;
       }
 
-    function createTurnText(scene, width, height, scaleRatio) {
-      return scene.add.text(width / 2, height * 0.1, '', {
-        fontSize: `${48 * scaleRatio}px`,
-        fill: '#fff',
-        stroke: '#000',
-        strokeThickness: 6 * scaleRatio
-      }).setOrigin(0.5);
-    }
-
-    function createActionLogText(scene, width, height, scaleRatio) {
-      return scene.add.text(width / 2, height * 0.9, '', {
-        fontSize: `${24 * scaleRatio}px`,
-        fill: '#fff',
-        stroke: '#000',
-        strokeThickness: 4 * scaleRatio,
-        align: 'center'
-      }).setOrigin(0.5);
-    }
-
-    function createActionButtons(scene, width, height, scaleRatio) {
-      const currentPlayer = gameState[gameState.turnPlayer];
-      console.log(currentPlayer);
-      const playerClass = currentPlayer.class; 
-    
-      return playerClass.powers.map((power, index) => {
-        const button = scene.add.text(
-          width * ((index + 1) / (playerClass.powers.length + 1)),
-          height * 0.95,
-          power.name,
-          {
-            fontSize: `${20 * scaleRatio}px`,
-            fill: '#fff',
-            stroke: '#000',
-            strokeThickness: 3 * scaleRatio,
-            backgroundColor: '#4b0082',
-            padding: { x: 8 * scaleRatio, y: 4 * scaleRatio }
-          }
-        ).setOrigin(0.5).setInteractive({ useHandCursor: true });
-    
-        button.on('pointerdown', () => handleAction(index));
-        return button;
-      });
-    }
-
-    function resize(scene, gameSize) {
-      const width = gameSize.width;
-      const height = gameSize.height;
-      const scaleRatio = Math.min(width / 1024, height / 768);
-
-      scene.cameras.resize(width, height);
-
-      if (player1Card && player2Card) {
-        player1Card.setPosition(width * 0.5, height * 0.2);
-        player2Card.setPosition(width * 0.5, height * 0.8);
+      function createTurnText(scene, width, height, scaleRatio) {
+        return scene.add.text(width / 2, height * 0.1, '', {
+          fontSize: `${36 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 6 * scaleRatio
+        }).setOrigin(0.5);
       }
-
-      if (turnText) {
-        turnText.setPosition(width / 2, height * 0.1).setFontSize(`${48 * scaleRatio}px`);
+  
+      function createActionLogText(scene, width, height, scaleRatio) {
+        return scene.add.text(width / 2, height * 0.5, '', {
+          fontSize: `${24 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 4 * scaleRatio,
+          align: 'center'
+        }).setOrigin(0.5);
       }
-
-      if (actionLogText) {
-        actionLogText.setPosition(width / 2, height * 0.9).setFontSize(`${24 * scaleRatio}px`);
-      }
-
-      if (actionButtons) {
-        actionButtons.forEach((button, index) => {
-          button.setPosition(width * (0.25 + index * 0.25), height * 0.95).setFontSize(`${24 * scaleRatio}px`);
+  
+      function createActionButtons(scene, width, height, scaleRatio) {
+        const currentPlayer = gameState[gameState.turnPlayer];
+        const playerClass = currentPlayer.class; 
+      
+        return playerClass.powers.map((power, index) => {
+          const button = scene.add.text(
+            width * ((index + 1) / (playerClass.powers.length + 1)),
+            height * 0.9,
+            `${power.name} (${power.manaCost} MP)`,
+            {
+              fontSize: `${20 * scaleRatio}px`,
+              fill: '#fff',
+              stroke: '#000',
+              strokeThickness: 3 * scaleRatio,
+              backgroundColor: '#4b0082',
+              padding: { x: 8 * scaleRatio, y: 4 * scaleRatio }
+            }
+          ).setOrigin(0.5).setInteractive({ useHandCursor: true });
+      
+          button.on('pointerdown', () => handleAction(index));
+          return button;
         });
       }
-    }
+  
+      function resize(scene, gameSize) {
+        const width = gameSize.width;
+        const height = gameSize.height;
+        const scaleRatio = Math.min(width / 1024, height / 768);
+  
+        scene.cameras.resize(width, height);
+  
+        if (player1Card && player2Card) {
+          player1Card.setPosition(width * 0.5, height * 0.75);
+          player2Card.setPosition(width * 0.5, height * 0.25);
+        }
+  
+        if (turnText) {
+          turnText.setPosition(width / 2, height * 0.1).setFontSize(`${36 * scaleRatio}px`);
+        }
+  
+        if (actionLogText) {
+          actionLogText.setPosition(width / 2, height * 0.5).setFontSize(`${24 * scaleRatio}px`);
+        }
+  
+        if (actionButtons) {
+          actionButtons.forEach((button, index) => {
+            button.setPosition(width * ((index + 1) / (actionButtons.length + 1)), height * 0.9).setFontSize(`${20 * scaleRatio}px`);
+          });
+        }
+      }
 
     function handleAction(powerIndex) {
       if (gameState.turnPlayer === 'player1') {
@@ -483,14 +466,6 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function updatePlayerCard(card, player) {
-      const healthPercentage = player.health / 100;
-      const manaPercentage = player.mana / 100;
-      const shieldPercentage = player.shield / 100;
-    
-      card.healthBar.scaleX = healthPercentage;
-      card.manaBar.scaleX = manaPercentage;
-      card.shieldBar.scaleX = shieldPercentage;
-    
       card.healthText.setText(`HP: ${player.health}`);
       card.manaText.setText(`MP: ${player.mana}`);
       card.shieldText.setText(`Shield: ${player.shield}`);

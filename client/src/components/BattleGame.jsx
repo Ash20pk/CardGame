@@ -81,7 +81,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
 
       
       function preload() {
-        this.load.setBaseURL('https://card-game-eosin.vercel.app/');
+        this.load.setBaseURL('https://card-game-psi-ashen.vercel.app/');
         this.load.image('background', 'assets/background.jpg');
         this.load.image('card_frame', 'assets/card.png');
         this.load.image('card_mask', 'assets/card_mask.png');
@@ -189,6 +189,23 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         characterImage.setDisplaySize(circleRadius * 6, circleRadius * 5);
         characterImage.mask = mask;
         characterImage.setOrigin(0.5);
+
+        // Create custom ribbon shape
+  const ribbon = scene.add.graphics();
+  ribbon.fillStyle(0xc0a080, 1); // Adjust color to match your design
+  ribbon.beginPath();
+  ribbon.moveTo(-90 * scaleRatio, -95 * scaleRatio);
+  ribbon.lineTo(90 * scaleRatio, -95 * scaleRatio);
+  ribbon.lineTo(100 * scaleRatio, -85 * scaleRatio);
+  ribbon.lineTo(90 * scaleRatio, -75 * scaleRatio);
+  ribbon.lineTo(-90 * scaleRatio, -75 * scaleRatio);
+  ribbon.lineTo(-100 * scaleRatio, -85 * scaleRatio);
+  ribbon.closePath();
+  ribbon.fillPath();
+
+  // Add outline to the ribbon
+  ribbon.lineStyle(2 * scaleRatio, 0x80705E, 1);
+  ribbon.strokePath();
               
         // Add name on the ribbon
         const nameText = scene.add.text(10, 10 * scaleRatio, player.name, {

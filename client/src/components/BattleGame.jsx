@@ -190,30 +190,6 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         characterImage.mask = mask;
         characterImage.setOrigin(0.5);
 
-        // Create custom ribbon shape
-  const ribbon = scene.add.graphics();
-  ribbon.fillStyle(0xc0a080, 1); // Adjust color to match your design
-  ribbon.beginPath();
-  ribbon.moveTo(-90 * scaleRatio, -95 * scaleRatio);
-  ribbon.lineTo(90 * scaleRatio, -95 * scaleRatio);
-  ribbon.lineTo(100 * scaleRatio, -85 * scaleRatio);
-  ribbon.lineTo(90 * scaleRatio, -75 * scaleRatio);
-  ribbon.lineTo(-90 * scaleRatio, -75 * scaleRatio);
-  ribbon.lineTo(-100 * scaleRatio, -85 * scaleRatio);
-  ribbon.closePath();
-  ribbon.fillPath();
-
-  // Add outline to the ribbon
-  ribbon.lineStyle(2 * scaleRatio, 0x80705E, 1);
-  ribbon.strokePath();
-              
-        // Add name on the ribbon
-        const nameText = scene.add.text(10, 10 * scaleRatio, player.name, {
-          fontSize: `${16 * scaleRatio}px`,
-          fill: '#fff',
-          stroke: '#000',
-          strokeThickness: 2 * scaleRatio
-        }).setOrigin(0.5);
   
         // Add stats to the card
         const healthText = scene.add.text(-40 * scaleRatio, 50 * scaleRatio, `HP: ${player.health}`, {
@@ -251,7 +227,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           fill: '#00ff00'
         });
   
-        card.add([characterImage, frame, nameText, healthText, manaText, shieldText, healthChange, manaChange, shieldChange]);
+        card.add([characterImage, frame, healthText, manaText, shieldText, healthChange, manaChange, shieldChange]);
         
         // Store references to update later
         card.healthText = healthText;
@@ -277,14 +253,15 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       function createActionLogCard(scene, x, y, scaleRatio) {
         const card = scene.add.container(x, y);
         const frame = scene.add.image(0, 0, 'battle_log').setScale(0.305 * scaleRatio);
-      
-        const titleText = scene.add.text(0, -100 * scaleRatio, 'Battle Log', {
-          fontSize: `${24 * scaleRatio}px`,
+        console.log(player2);
+
+        const nameText = scene.add.text(0, -150 * scaleRatio, `${player1.name} Vs ${player2.name}`, {
+          fontSize: `${26 * scaleRatio}px`,
           fill: '#000',
           stroke: '#fff',
           strokeThickness: 4 * scaleRatio
         }).setOrigin(0.5);
-      
+
         const logText = scene.add.text(0, 0, '', {
           fontSize: `${16 * scaleRatio}px`,
           fill: '#000',
@@ -294,7 +271,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           wordWrap: { width: 300 * scaleRatio }
         }).setOrigin(0.5);
       
-        card.add([frame, titleText, logText]);
+        card.add([frame, nameText, logText]);
         
         return logText;
       }

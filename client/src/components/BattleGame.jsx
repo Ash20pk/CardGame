@@ -89,12 +89,12 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('battle_log', 'assets/oldpage.png');
         this.load.image('player1_image', player1.image, { frameWidth: 100, frameHeight: 100 });
         this.load.image('player2_image', player2.image, { frameWidth: 100, frameHeight: 100 });
-        this.load.spritesheet('attack_effect', 'assets/attack_spritesheet.jpg', {
+        this.load.spritesheet('attack_effect', 'assets/attack_sprite.png', {
           frameWidth: 70,
           frameHeight: 128
         });
-        this.load.image('defend_effect', 'assets/attack_spritesheet.jpg');
-        this.load.image('special_effect', 'assets/attack_spritesheet.jpg');
+        this.load.image('defend_effect', 'assets/defence_sprite.png');
+        this.load.image('special_effect', 'assets/special_sprite.png');
       }
   
       function create() {
@@ -127,8 +127,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         // Create animations
         scene.anims.create({
           key: 'attack_anim',
-          frames: scene.anims.generateFrameNumbers('attack_effect', { start: 0, end: 5 }),
-          frameRate: 10,
+          frames: scene.anims.generateFrameNumbers('attack_effect', { start: 0, end: 8 }),
+          frameRate: 5,
           repeat: 0
         });
 

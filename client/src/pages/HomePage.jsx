@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { VStack, Heading, Button, Box, Text, SimpleGrid, Input, InputGroup, InputRightElement, Flex, Image, Card, CardBody, Progress, IconButton } from '@chakra-ui/react';
+import { VStack, Heading, Button, Box, Text, SimpleGrid, Input, InputGroup, InputRightElement, Flex, Image, Card, CardBody, Progress, IconButton, Container, useColorModeValue } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { ethers } from 'ethers';
 import CardBattleGame from '../artifacts/CardBattleGame.json';
@@ -28,6 +28,10 @@ function HomePage() {
 
     const gameContract = new ethers.Contract(gameContractAddress, CardBattleGame.abi, signer);
     const nftContract = new ethers.Contract(nftContractAddress, NFT, signer);
+
+    const bgColor = useColorModeValue('gray.800', 'gray.900');
+    const cardBgColor = useColorModeValue('gray.700', 'gray.800');
+    const textColor = useColorModeValue('white', 'gray.100');
 
 
     const saveToLocalStorage = (data, LOCAL_STORAGE_KEY) => {
@@ -238,97 +242,85 @@ function HomePage() {
     };
 
     return (
-        <VStack spacing={8} align="stretch" p={4}>
-            <Flex justifyContent="space-between" alignItems="center">
-                <Heading size="xl">Card Battle Game</Heading>
+        <Box width="100vw" height="100vh" bg={bgColor} color={textColor} overflowY="auto" overflowX="hidden" p={6}>
+            <Flex justifyContent="space-between" alignItems="center" mb={6}>
+                <Heading size="2xl" fontFamily="'Cinzel', serif" color="yellow.200">Block Quest</Heading>
                 {signer ? (
                     <Flex alignItems="center">
                         <Text mr={4} fontWeight="bold">Connected: {account.slice(0, 6)}...{account.slice(-4)}</Text>
-                        <Button onClick={disconnectWallet} colorScheme="red" size="sm">Disconnect</Button>
+                        <Button onClick={disconnectWallet} colorScheme="red" size="lg">Disconnect</Button>
                     </Flex>
                 ) : (
-                    <Button onClick={connectWallet} colorScheme="blue" size="sm">Connect Wallet</Button>
+                    <Button onClick={connectWallet} colorScheme="blue" size="lg">Connect Wallet</Button>
                 )}
             </Flex>
 
             {signer && (
-                <VStack spacing={6} align="stretch">
-                    <Heading size="lg">Welcome, {playerName}!</Heading>
+                <VStack spacing={8} align="stretch">
+                    <Heading size="xl" fontFamily="'Cinzel', serif" color="yellow.100">Welcome, {playerName}!</Heading>
 
-                    <SimpleGrid columns={[1, null, 2]} spacing={6}>
-                        <Card>
-                            <CardBody>
-                            <Heading size="md" mb={4}>Your NFTs</Heading>
+                    <SimpleGrid columns={[1, null, 2]} spacing={8}>
+                        <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="dark-lg">
+                            <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Your Champions</Heading>
                             <NFTCarousel nfts={playerNFTs} onSelect={setSelectedNFT} />
-                            </CardBody>
-                        </Card>
+                        </Box>
 
-                        <Card>
-                          <CardBody>
-                              <Heading size="md" mb={4}>Character Stats ({selectedNFT?.class || 'N/A'})</Heading>
-                              {characterStats ? (
-                                  <>
-                                      <Flex alignItems="center" mb={2}>
-                                          <Text width="80px">Health:</Text>
-                                          <Progress value={characterStats.baseHealth} size='sm' colorScheme='green' flex="1" mr={2} />
-                                          <Text width="40px" textAlign="right">{characterStats.baseHealth}</Text>
-                                      </Flex>
-                                      <Flex alignItems="center" mb={2}>
-                                          <Text width="80px">Mana:</Text>
-                                          <Progress value={characterStats.baseMana} size='sm' colorScheme='blue' flex="1" mr={2} />
-                                          <Text width="40px" textAlign="right">{characterStats.baseMana}</Text>
-                                      </Flex>
-                                      <Flex alignItems="center" mb={2}>
-                                          <Text width="80px">Attack:</Text>
-                                          <Progress value={characterStats.baseAttack} size='sm' colorScheme='red' flex="1" mr={2} />
-                                          <Text width="40px" textAlign="right">{characterStats.baseAttack}</Text>
-                                      </Flex>
-                                      <Flex alignItems="center">
-                                          <Text width="80px">Defense:</Text>
-                                          <Progress value={characterStats.baseDefense} size='sm' colorScheme='yellow' flex="1" mr={2} />
-                                          <Text width="40px" textAlign="right">{characterStats.baseDefense}</Text>
-                                      </Flex>
-                                  </>
-                              ) : (
-                                  <Text>No character data available</Text>
-                              )}
-                          </CardBody>
-                      </Card>
+                        <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="dark-lg">
+                            <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Champion Stats</Heading>
+                            {characterStats ? (
+                                <>
+                                    <StatBar label="HP" value={characterStats.baseHealth} max={120} color="green" />
+                                    <StatBar label="MP" value={characterStats.baseMana} max={100} color="blue" />
+                                    <StatBar label="ATK" value={characterStats.baseAttack} max={100} color="red" />
+                                    <StatBar label="DEF" value={characterStats.baseDefense} max={100} color="yellow" />
+                                </>
+                            ) : (
+                                <Text>No champion data available</Text>
+                            )}
+                        </Box>
                     </SimpleGrid>
 
-                    <Card>
-                        <CardBody>
-                            <Heading size="md" mb={4}>Battle Arena</Heading>
-                            <InputGroup size="md" mb={4}>
-                                <Input
-                                    pr="4.5rem"
-                                    type="text"
-                                    placeholder="Enter battle name"
-                                    value={newBattleName}
-                                    onChange={(e) => setNewBattleName(e.target.value)}
-                                />
-                                <InputRightElement width="4.5rem">
-                                    <Button h="1.75rem" size="sm" onClick={createBattle} colorScheme="green">
-                                        Create
+                    <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="dark-lg">
+                        <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Battle Arena</Heading>
+                        <InputGroup size="md" mb={4}>
+                            <Input
+                                pr="4.5rem"
+                                type="text"
+                                placeholder="Enter battle name"
+                                value={newBattleName}
+                                onChange={(e) => setNewBattleName(e.target.value)}
+                                bg="gray.700"
+                            />
+                            <InputRightElement width="4.5rem">
+                                <Button h="1.75rem" size="lg" onClick={createBattle} colorScheme="green">
+                                    Create
+                                </Button>
+                            </InputRightElement>
+                        </InputGroup>
+                        <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+                            {battles.map((battle, index) => (
+                                <Box key={index} borderWidth={1} borderRadius="lg" p={4} bg="gray.700">
+                                    <Text fontWeight="bold" mb={2}>{battle[0]}</Text>
+                                    <Button onClick={() => joinBattle(index+1, battle[1], battle[5].toString(), selectedNFT.tokenId)} colorScheme="blue" width="100%">
+                                        Join Battle
                                     </Button>
-                                </InputRightElement>
-                            </InputGroup>
-                            <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-                                {battles.map((battle, index) => (
-                                    <Box key={index} borderWidth={1} borderRadius="lg" p={4}>
-                                        <Text fontWeight="bold">{battle[0]}</Text>
-                                        <Button onClick={() => joinBattle(index+1, battle[1], battle[5].toString(), selectedNFT.tokenId)} colorScheme="blue" mt={2} size="sm">
-                                            Join Battle
-                                        </Button>
-                                    </Box>
-                                ))}
-                            </SimpleGrid>
-                        </CardBody>
-                    </Card>
+                                </Box>
+                            ))}
+                        </SimpleGrid>
+                    </Box>
                 </VStack>
             )}
-        </VStack>
+        </Box>
     );
 }
+
+// Helper component for stat bars
+const StatBar = ({ label, value, max, color }) => (
+    <Flex alignItems="center" mb={2}>
+        <Text width="40px" fontWeight="bold">{label}:</Text>
+        <Progress value={value} max={max} size='sm' colorScheme={color} flex="1" mr={2} />
+        <Text width="40px" textAlign="right">{value}</Text>
+    </Flex>
+);
 
 export default HomePage;

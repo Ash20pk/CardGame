@@ -66,14 +66,13 @@ const BattleArea = () => {
     setIsModalOpen(true);
   
     try {
+      localStorage.removeItem(`battle_${battleId}`)
+      localStorage.removeItem(`battleGame_${battleId}`)
       await contract.resolveBattle(battleId, winnerAddress, expGained);
       console.log("Battle resolved successfully");
     } catch (error) {
       console.error("Error resolving battle:", error);
-    } finally {
-      localStorage.removeItem(`battle_${battleId}`)
-      localStorage.removeItem(`battleGame_${battleId}`)
-    }
+    } 
   };
 
   const toggleFullscreen = () => {

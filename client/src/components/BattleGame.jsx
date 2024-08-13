@@ -89,12 +89,9 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('battle_log', 'assets/oldpage.png');
         this.load.image('player1_image', player1.image, { frameWidth: 100, frameHeight: 100 });
         this.load.image('player2_image', player2.image, { frameWidth: 100, frameHeight: 100 });
-        this.load.spritesheet('attack_effect', 'assets/attack_sprite.png', {
-          frameWidth: 70,
-          frameHeight: 128
-        });
-        this.load.image('defend_effect', 'assets/defence_sprite.png');
-        this.load.image('special_effect', 'assets/special_sprite.png');
+        this.load.spritesheet('attack_effect', 'assets/attack_sprite.png', {frameWidth: 70, frameHeight: 128});
+        this.load.image('defend_effect', 'assets/defence_sprite.png', { frameWidth: 70, frameHeight: 128 });
+        this.load.image('special_effect', 'assets/special_sprite.png', { frameWidth: 70, frameHeight: 70, endFrame: 15 });
       }
   
       function create() {
@@ -131,18 +128,10 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           frameRate: 5,
           repeat: 0
         });
-
-        scene.anims.create({
-          key: 'defend_anim',
-          frames: scene.anims.generateFrameNumbers('defend_effect', { start: 0, end: 5 }),
-          frameRate: 10,
-          repeat: 0
-        });
-
         scene.anims.create({
           key: 'special_anim',
-          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 5 }),
-          frameRate: 10,
+          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 15, first: 0 }),
+          frameRate: 20,
           repeat: 0
         });
       }
@@ -376,7 +365,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           break;
         case 'defend':
           actionResult = handleDefend(power, attacker);
-          playAnimation('defend_anim', attackerCard);
+          playAnimation('defend_effect', attackerCard);
           break;
         case 'special':
           actionResult = handleSpecial(power, attacker, defender);
@@ -601,7 +590,24 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function playAnimation(animKey, targetCard) {
+
+      if (animKey === 'defend_effect') {
+        const sprite = animationLayer.scene.add.image(targetCard.x, targetCard.y, 'defend_effect')
+          .setOrigin(0.5, 0.5)
+          .setScale(1);
+        
+          animationLayer.scene.tweens.add({
+          targets: sprite,
+          alpha: { from: 1, to: 0 },
+          scale: { from: 1, to: 1.5 },
+          duration: 1000,
+          onComplete: () => {
+            sprite.destroy();
+          }
+        });
+      } else {
       const sprite = animationLayer.scene.add.sprite(targetCard.x, targetCard.y, animKey.split('_')[0] + '_effect')
+        .setOrigin(0.5, 0.5)
         .setScale(2);
       animationLayer.add(sprite);
     
@@ -611,44 +617,6 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         sprite.destroy();
       });
     }
-
-    function playAttackAnimation(sourceCard, targetCard) {
-      const attackerSprite = animationLayer.scene.add.sprite(sourceCard.x, sourceCard.y, 'attack_effect')
-        .setOrigin(0.5, 1)
-        .setScale(2);
-      
-      const defenderSprite = animationLayer.scene.add.sprite(targetCard.x, targetCard.y, 'attack_effect')
-        .setOrigin(0.5, 0)
-        .setScale(2)
-        .setFlipY(true);
-
-      animationLayer.add(attackerSprite);
-      animationLayer.add(defenderSprite);
-
-      attackerSprite.play('attack_top');
-      defenderSprite.play('attack_bottom');
-
-      animationLayer.scene.tweens.add({
-        targets: attackerSprite,
-        x: (sourceCard.x + targetCard.x) / 2,
-        duration: 500,
-        ease: 'Power2'
-      });
-
-      animationLayer.scene.tweens.add({
-        targets: defenderSprite,
-        x: (sourceCard.x + targetCard.x) / 2,
-        duration: 500,
-        ease: 'Power2'
-      });
-
-      attackerSprite.on('animationcomplete', () => {
-        attackerSprite.destroy();
-      });
-
-      defenderSprite.on('animationcomplete', () => {
-        defenderSprite.destroy();
-      });
     }
 
     return () => {

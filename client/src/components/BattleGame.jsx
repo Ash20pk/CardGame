@@ -187,7 +187,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         // const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
         
         // Add the character image 
-        const characterImage = scene.add.image(100, -40, imageKey);
+        const characterImage = scene.add.image(90, -40, imageKey);
         characterImage.setDisplaySize(circleRadius * 6, circleRadius * 5);
         characterImage.setCrop(0,40, 450, 600);
         // characterImage.mask = mask;

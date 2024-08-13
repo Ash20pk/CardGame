@@ -8,14 +8,14 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     const config = {
       type: Phaser.AUTO,
       parent: gameRef.current,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: 1920,
+      height: 1080,
       scene: {
         preload: preload,
         create: create,
       },
       scale: {
-        mode: Phaser.Scale.RESIZE,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
       }
     };
@@ -87,8 +87,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('card_mask', 'assets/card_mask.png');
         this.load.image('card_mask_1', 'assets/card_mask_1.png');
         this.load.image('battle_log', 'assets/oldpage.png');
-        this.load.image('player1_image', player1.image);
-        this.load.image('player2_image', player2.image);
+        this.load.image('player1_image', player1.image, { frameWidth: 100, frameHeight: 100 });
+        this.load.image('player2_image', player2.image, { frameWidth: 100, frameHeight: 100 });
         this.load.spritesheet('attack_effect', 'assets/attack_spritesheet.jpg', {
           frameWidth: 70,
           frameHeight: 128

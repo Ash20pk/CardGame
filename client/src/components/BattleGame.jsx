@@ -124,16 +124,24 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       }
 
       function createAnimations(scene) {
+        // Create animations
         scene.anims.create({
-          key: 'attack_top',
-          frames: scene.anims.generateFrameNumbers('attack_effect', { start: 0, end: 3, first: 0 }),
+          key: 'attack_anim',
+          frames: scene.anims.generateFrameNumbers('attack_effect', { start: 0, end: 5 }),
           frameRate: 10,
           repeat: 0
         });
-  
+
         scene.anims.create({
-          key: 'attack_bottom',
-          frames: scene.anims.generateFrameNumbers('attack_effect', { start: 4, end: 7, first: 4 }),
+          key: 'defend_anim',
+          frames: scene.anims.generateFrameNumbers('defend_effect', { start: 0, end: 5 }),
+          frameRate: 10,
+          repeat: 0
+        });
+
+        scene.anims.create({
+          key: 'special_anim',
+          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 5 }),
           frameRate: 10,
           repeat: 0
         });
@@ -181,16 +189,11 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         
         // Adjust these values to fit the image within the card frame
         const circleRadius = 45 * scaleRatio; // Increase the circle size
-        
-        // const frameMask = scene.make.image({ x: x + 185, y: y + 20, key: 'card_mask_1', add: false }).setScale(0.5 * scaleRatio);
-
-        // const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
-        
+  
         // Add the character image 
         const characterImage = scene.add.image(90, -40, imageKey);
         characterImage.setDisplaySize(circleRadius * 6, circleRadius * 5);
         characterImage.setCrop(0,40, 450, 600);
-        // characterImage.mask = mask;
         characterImage.setOrigin(0.5);
         characterImage.setScale(0.3 * scaleRatio)
 
@@ -363,15 +366,21 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       attacker.cooldowns[powerIndex] = power.cooldown || 0;
       let actionResult = '';
 
+      const attackerCard = attacker === gameState.player1 ? player1Card : player2Card;
+      const defenderCard = defender === gameState.player1 ? player1Card : player2Card;
+
       switch (power.type) {
         case 'attack':
           actionResult = handleAttack(power, attacker, defender);
+          playAnimation('attack_anim', defenderCard);
           break;
         case 'defend':
           actionResult = handleDefend(power, attacker);
+          playAnimation('defend_anim', attackerCard);
           break;
         case 'special':
           actionResult = handleSpecial(power, attacker, defender);
+          playAnimation('special_anim', defenderCard);
           break;
       }
 
@@ -591,19 +600,15 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       return savedState ? JSON.parse(savedState) : null;
     }
 
-    function playAnimation(effectKey, targetCard) {
-      const effect = animationLayer.scene.add.image(targetCard.x, targetCard.y, effectKey).setScale(0);
-      animationLayer.add(effect);
-
-      animationLayer.scene.tweens.add({
-        targets: effect,
-        scale: 1,
-        alpha: { from: 1, to: 0 },
-        duration: 1000,
-        ease: 'Power2',
-        onComplete: () => {
-          effect.destroy();
-        }
+    function playAnimation(animKey, targetCard) {
+      const sprite = animationLayer.scene.add.sprite(targetCard.x, targetCard.y, animKey.split('_')[0] + '_effect')
+        .setScale(2);
+      animationLayer.add(sprite);
+    
+      sprite.play(animKey);
+    
+      sprite.on('animationcomplete', () => {
+        sprite.destroy();
       });
     }
 

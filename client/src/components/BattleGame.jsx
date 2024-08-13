@@ -90,8 +90,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('player1_image', player1.image, { frameWidth: 100, frameHeight: 100 });
         this.load.image('player2_image', player2.image, { frameWidth: 100, frameHeight: 100 });
         this.load.spritesheet('attack_effect', 'assets/attack_sprite.png', {frameWidth: 70, frameHeight: 128});
-        this.load.image('defend_effect', 'assets/defence_sprite.png', { frameWidth: 70, frameHeight: 128 });
-        this.load.image('special_effect', 'assets/special_sprite.png', {frameWidth: 70, frameHeight: 128});
+        this.load.image('defend_effect', 'assets/defence_sprite.png', { frameWidth: 150, frameHeight: 128 });
+        this.load.spritesheet('special_effect', 'assets/special_sprite.png', {frameWidth: 200, frameHeight: 200});
       }
   
       function create() {
@@ -130,8 +130,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         });
         scene.anims.create({
           key: 'special_anim',
-          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 8 }),
-          frameRate: 5,
+          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 11 }),
+          frameRate: 10,
           repeat: 0
         });
       }
@@ -594,7 +594,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       if (animKey === 'defend_effect') {
         const sprite = animationLayer.scene.add.image(targetCard.x, targetCard.y, 'defend_effect')
           .setOrigin(0.5, 0.5)
-          .setScale(1);
+          .setScale(4);
         
           animationLayer.scene.tweens.add({
           targets: sprite,
@@ -611,12 +611,9 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         .setScale(2);
       animationLayer.add(sprite);
     
-      if (animKey === 'special_effect') {
-        sprite.play('special_anim');
-      } else {
-        sprite.play('attack_anim');
-      }
-
+      
+      sprite.play(animKey);
+      
       sprite.on('animationcomplete', () => {
         sprite.destroy();
       });

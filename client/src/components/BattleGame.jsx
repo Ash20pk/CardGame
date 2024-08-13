@@ -201,7 +201,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 4 * scaleRatio
         }).setOrigin(0.5);
 
-        const classText = scene.add.text(0, 15 * scaleRatio, player.class.name, {
+        const classText = scene.add.text(0, 12 * scaleRatio, player.class.name, {
           fontSize: `${12 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
@@ -211,37 +211,37 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
   
         // Add stats to the card
         const healthText = scene.add.text(-40 * scaleRatio, 30 * scaleRatio, `HP: ${player.health}`, {
-          fontSize: `${14 * scaleRatio}px`,
-          fill: '#fff',
-          stroke: '#000',
+          fontSize: `${12 * scaleRatio}px`,
+          fill: '#000',
+          stroke: '#fff',
           strokeThickness: 1 * scaleRatio
         });
         
         const manaText = scene.add.text(-40 * scaleRatio, 45 * scaleRatio, `MP: ${player.mana}`, {
-          fontSize: `${14 * scaleRatio}px`,
-          fill: '#fff',
-          stroke: '#000',
+          fontSize: `${12 * scaleRatio}px`,
+          fill: '#000',
+          stroke: '#fff',
           strokeThickness: 1 * scaleRatio
         });
         
         const shieldText = scene.add.text(-40 * scaleRatio, 60 * scaleRatio, `Shield: ${player.shield}`, {
-          fontSize: `${14 * scaleRatio}px`,
-          fill: '#fff',
-          stroke: '#000',
+          fontSize: `${12 * scaleRatio}px`,
+          fill: '#000',
+          stroke: '#fff',
           strokeThickness: 1 * scaleRatio
         });
 
         // Add change indicators
-        const healthChange = scene.add.text(40 * scaleRatio, 30 * scaleRatio, '', {
-          fontSize: `${14 * scaleRatio}px`,
+        const healthChange = scene.add.text(15 * scaleRatio, 30 * scaleRatio, '', {
+          fontSize: `${12 * scaleRatio}px`,
           fill: '#00ff00'
         });
-        const manaChange = scene.add.text(40 * scaleRatio, 65 * scaleRatio, '', {
-          fontSize: `${14 * scaleRatio}px`,
+        const manaChange = scene.add.text(12 * scaleRatio, 44 * scaleRatio, '', {
+          fontSize: `${12 * scaleRatio}px`,
           fill: '#00ff00'
         });
-        const shieldChange = scene.add.text(40 * scaleRatio, 80 * scaleRatio, '', {
-          fontSize: `${14 * scaleRatio}px`,
+        const shieldChange = scene.add.text(35 * scaleRatio, 60 * scaleRatio, '', {
+          fontSize: `${12 * scaleRatio}px`,
           fill: '#00ff00'
         });
   
@@ -272,6 +272,13 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         const card = scene.add.container(x, y);
         const frame = scene.add.image(0, 0, 'battle_log').setScale(0.305 * scaleRatio);
 
+        const battleLogText = scene.add.text(0, -100 * scaleRatio, 'Battle Log', {
+          fontSize: `${26 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 4 * scaleRatio
+        }).setOrigin(0.5);
+
         const logText = scene.add.text(0, 0, '', {
           fontSize: `${16 * scaleRatio}px`,
           fill: '#000',
@@ -281,7 +288,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           wordWrap: { width: 300 * scaleRatio }
         }).setOrigin(0.5);
       
-        card.add([frame, logText]);
+        card.add([frame, battleLogText, logText]);
         
         return logText;
       }

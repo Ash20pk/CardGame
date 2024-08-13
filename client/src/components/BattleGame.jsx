@@ -175,38 +175,39 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
 
       function createPlayerCard(scene, x, y, player, imageKey, scaleRatio) {
         const card = scene.add.container(x, y);
-        const frame = scene.add.image(0, 0, 'card_frame').setScale(0.5 * scaleRatio);
+        const frame = scene.add.image(0, 0, 'card_frame').setScale(0.8 * scaleRatio);
         
         // Adjust these values to fit the image within the card frame
         const circleRadius = 45 * scaleRatio; // Increase the circle size
         
-        const frameMask = scene.make.image({ x: x + 185, y: y + 20, key: 'card_mask_1', add: false }).setScale(0.5 * scaleRatio);
+        // const frameMask = scene.make.image({ x: x + 185, y: y + 20, key: 'card_mask_1', add: false }).setScale(0.5 * scaleRatio);
 
-        const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
+        // const mask = new Phaser.Display.Masks.BitmapMask(scene, frameMask);
         
         // Add the character image 
         const characterImage = scene.add.image(100, -40, imageKey);
         characterImage.setDisplaySize(circleRadius * 6, circleRadius * 5);
-        characterImage.mask = mask;
+        characterImage.setCrop(0,100, 450, 600);
+        // characterImage.mask = mask;
         characterImage.setOrigin(0.5);
 
   
         // Add stats to the card
-        const healthText = scene.add.text(-40 * scaleRatio, 50 * scaleRatio, `HP: ${player.health}`, {
+        const healthText = scene.add.text(-40 * scaleRatio, 30 * scaleRatio, `HP: ${player.health}`, {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
           strokeThickness: 1 * scaleRatio
         });
         
-        const manaText = scene.add.text(-40 * scaleRatio, 65 * scaleRatio, `MP: ${player.mana}`, {
+        const manaText = scene.add.text(-40 * scaleRatio, 45 * scaleRatio, `MP: ${player.mana}`, {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
           strokeThickness: 1 * scaleRatio
         });
         
-        const shieldText = scene.add.text(-40 * scaleRatio, 80 * scaleRatio, `Shield: ${player.shield}`, {
+        const shieldText = scene.add.text(-40 * scaleRatio, 60 * scaleRatio, `Shield: ${player.shield}`, {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#fff',
           stroke: '#000',
@@ -214,7 +215,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         });
 
         // Add change indicators
-        const healthChange = scene.add.text(40 * scaleRatio, 50 * scaleRatio, '', {
+        const healthChange = scene.add.text(40 * scaleRatio, 30 * scaleRatio, '', {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#00ff00'
         });

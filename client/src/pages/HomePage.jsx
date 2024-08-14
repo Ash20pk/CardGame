@@ -254,7 +254,7 @@ function HomePage() {
     };
 
     return (
-        <Box width="100vw" height="100vh" bg={bgColor} color={textColor} overflowY="auto" overflowX="hidden" p={6}>
+        <Box width="100vw" height="100vh" bgImage="url('/assets/background.jpg')" bgPosition="center" bgRepeat="no-repeat" bgSize="cover" color={textColor} overflowY="auto" overflowX="hidden" p={6}>
             <Flex justifyContent="space-between" alignItems="center" mb={6}>
                 <Heading size="2xl" fontFamily="'Cinzel', serif" color="yellow.200">Block Quest</Heading>
                 {signer ? (
@@ -272,13 +272,13 @@ function HomePage() {
                     <Heading size="xl" fontFamily="'Cinzel', serif" color="yellow.100">Welcome, {playerName}!</Heading>
 
                     <SimpleGrid columns={[1, null, 2]} spacing={8}>
-                        <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="dark-lg">
+                        <Box bg="rgba(0,0,0,0.7)" p={6} borderRadius="lg" boxShadow="dark-lg">
                             <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Your Champions</Heading>
                             <NFTCarousel nfts={playerNFTs} onSelect={setSelectedNFT} />
                         </Box>
 
-                        <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="dark-lg">
-                            <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Champion Stats</Heading>
+                        <Box bg="rgba(0,0,0,0.7)" p={6} borderRadius="lg" boxShadow="dark-lg">
+                            <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Champion Stats({selectedNFT.class})</Heading>
                             {characterStats ? (
                                 <>
                                     <StatBar label="HP" value={characterStats.baseHealth} max={120} color="green" />
@@ -292,7 +292,7 @@ function HomePage() {
                         </Box>
                     </SimpleGrid>
 
-                    <Box bg={cardBgColor} p={6} borderRadius="lg" boxShadow="dark-lg">
+                    <Box bg="rgba(0,0,0,0.7)" p={6} borderRadius="lg" boxShadow="dark-lg">
                         <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Battle Arena</Heading>
                         <InputGroup size="md" mb={4}>
                             <Input
@@ -313,7 +313,7 @@ function HomePage() {
                             {battles.map((battle, index) => (
                                 <Box key={index} borderWidth={1} borderRadius="lg" p={4} bg="gray.700">
                                     <Text fontWeight="bold" mb={2}>{battle[0]}</Text>
-                                    <Button onClick={() => joinBattle(index+1, battle[1], battle[5].toString(), selectedNFT.tokenId)} colorScheme="blue" width="100%">
+                                    <Button onClick={() => joinBattle(index+1, battle[1], battle[5].toString(), selectedNFT.tokenId)} colorScheme="yellow" width="100%">
                                         Join Battle
                                     </Button>
                                 </Box>

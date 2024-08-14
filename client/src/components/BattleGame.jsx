@@ -563,7 +563,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function updateTurnText() {
-      turnText.setText(`${gameState[gameState.turnPlayer].name}'s Turn (Round ${gameState.roundNumber})`);
+      turnText.setText(`${gameState[gameState.turnPlayer].name}'s Turn`);
     }
 
     function updateActionButtons() {

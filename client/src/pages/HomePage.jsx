@@ -304,7 +304,7 @@ function HomePage() {
                                 bg="gray.700"
                             />
                             <InputRightElement width="4.5rem">
-                                <Button h="1.75rem" size="lg" m={5} onClick={createBattle} colorScheme="green">
+                                <Button h="1.75rem" size="lg" p={5} onClick={createBattle} colorScheme="green">
                                     Create
                                 </Button>
                             </InputRightElement>

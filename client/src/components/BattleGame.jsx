@@ -89,8 +89,8 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         this.load.image('battle_log', 'assets/oldpage.png');
         this.load.image('player1_image', player1.image, { frameWidth: 100, frameHeight: 100 });
         this.load.image('player2_image', player2.image, { frameWidth: 100, frameHeight: 100 });
-        this.load.spritesheet('attack_effect', 'assets/attack_sprite.png', {frameWidth: 70, frameHeight: 128});
-        this.load.image('defend_effect', 'assets/defence_sprite.png', { frameWidth: 150, frameHeight: 128 });
+        this.load.spritesheet('attack_effect', 'assets/attack_sprite.png', {frameWidth: 120, frameHeight: 120});
+        this.load.image('defend_effect', 'assets/defence_sprite.png', { frameWidth: 200, frameHeight: 200 });
         this.load.spritesheet('special_effect', 'assets/special_sprite.png', {frameWidth: 200, frameHeight: 200});
       }
   
@@ -127,13 +127,13 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           frames: scene.anims.generateFrameNumbers('attack_effect', { start: 0, end: 8 }),
           frameRate: 5,
           repeat: 0
-        });
+        })
         scene.anims.create({
           key: 'special_anim',
           frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 11 }),
           frameRate: 10,
           repeat: 0
-        });
+        })
       }
   
       function initializeGameState() {
@@ -594,21 +594,23 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       if (animKey === 'defend_effect') {
         const sprite = animationLayer.scene.add.image(targetCard.x, targetCard.y, 'defend_effect')
           .setOrigin(0.5, 0.5)
-          .setScale(4);
+          .setScale(6)
+          .setBlendMode(Phaser.BlendModes.SCREEN);
         
           animationLayer.scene.tweens.add({
           targets: sprite,
           alpha: { from: 1, to: 0 },
-          scale: { from: 1, to: 1.5 },
-          duration: 1000,
+          scale: { from: 1, to: 6 },
+          duration: 3000,
           onComplete: () => {
             sprite.destroy();
           }
         });
       } else {
       const sprite = animationLayer.scene.add.sprite(targetCard.x, targetCard.y, animKey.split('_')[0] + '_effect')
-        .setOrigin(0.5, 0.5)
-        .setScale(2);
+        .setOrigin(0.5, 0.7)
+        .setScale(2)
+        .setBlendMode(Phaser.BlendModes.SCREEN);
       animationLayer.add(sprite);
     
       

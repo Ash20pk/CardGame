@@ -152,13 +152,17 @@ function HomePage() {
     checkPlayerAndFetchData();
   }, [account]);
 
+  const CharacterStats = async () => {
+  fetchCharacterStats(selectedNFT.class).then(stats => {
+    if (stats) {
+      setCharacterStats(stats);
+    }
+  });
+}
+
     useEffect(() => {
       if (selectedNFT) {
-        fetchCharacterStats(selectedNFT.class).then(stats => {
-          if (stats) {
-            setCharacterStats(stats);
-          }
-        });
+        CharacterStats();
       }
     }, [selectedNFT]);
 
@@ -181,6 +185,10 @@ function HomePage() {
       //Check if the balance of the nft holding is same as the stored data
       if (storedData && storedData.balance === balance.toString() && storedData.account === account) {
         setPlayerNFTs(storedData.nfts);
+        if (storedData.nfts.length > 0 && !selectedNFT) {
+            setSelectedNFT(storedData.nfts[0]);
+            CharacterStats();
+          }
       } else {
         const nfts = [];
         for (let i = 0; i < balance; i++) {
@@ -191,6 +199,10 @@ function HomePage() {
           }
         }
         setPlayerNFTs(nfts);
+        if (nfts.length > 0 && !selectedNFT) {
+            setSelectedNFT(nfts[0]);
+            CharacterStats();
+          }
         saveToLocalStorage({ nfts, balance: balance.toString(), account }, 'playerNFTs');
       }
     }
@@ -292,7 +304,7 @@ function HomePage() {
                                 bg="gray.700"
                             />
                             <InputRightElement width="4.5rem">
-                                <Button h="1.75rem" size="lg" onClick={createBattle} colorScheme="green">
+                                <Button h="1.75rem" size="lg" m={5} onClick={createBattle} colorScheme="green">
                                     Create
                                 </Button>
                             </InputRightElement>

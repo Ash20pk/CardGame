@@ -134,7 +134,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         })
         scene.anims.create({
           key: 'special_anim',
-          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 11 }),
+          frames: scene.anims.generateFrameNumbers('special_effect', { start: 0, end: 8 }),
           frameRate: 10,
           repeat: 0
         })
@@ -274,13 +274,14 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 4 * scaleRatio
         }).setOrigin(0.5);
 
-        const logText = scene.add.text(0, 0, '', {
-          fontSize: `${16 * scaleRatio}px`,
+        const logText = scene.add.text(0, -20, '', {
+          fontSize: `${14 * scaleRatio}px`,
           fill: '#000',
           stroke: '#fff',
           strokeThickness: 2 * scaleRatio,
           align: 'center',
-          wordWrap: { width: 300 * scaleRatio }
+          wordWrap: { width: 260 * scaleRatio },
+          lineSpacing: 30
         }).setOrigin(0.5);
       
         card.add([frame, battleLogText, logText]);
@@ -380,7 +381,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       gameState.currentTurn++;
       gameState.turnPlayer = attacker === gameState.player1 ? 'player2' : 'player1';
       gameState.actionLog.unshift(actionResult);
-      if (gameState.actionLog.length > 3) gameState.actionLog.pop();
+      if (gameState.actionLog.length > 2) gameState.actionLog.length = 2;
 
       reduceCooldowns();
 
@@ -610,7 +611,19 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function updateActionLog() {
-      actionLogText.setText(gameState.actionLog.join('\n'));
+      const formattedLog = gameState.actionLog.map(entry => `--- ${entry} ---`).join('\n\n\n');
+      console.log(formattedLog);
+      actionLogText.setText(formattedLog);
+      actionLogText.setLineSpacing(30);
+
+      // Add a visual effect to the log
+      actionLogText.setAlpha(0.5);
+      actionLogText.scene.tweens.add({
+        targets: actionLogText,
+        alpha: 1,
+        duration: 500,
+        ease: 'Power2'
+      });
     }
 
     function saveGameState() {

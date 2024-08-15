@@ -611,10 +611,10 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     }
 
     function updateActionLog() {
-      const formattedLog = gameState.actionLog.join('\n\n\n\n');
+      const formattedLog = gameState.actionLog.join('\n\n');
       console.log(formattedLog);
       actionLogText.setText(formattedLog);
-      actionLogText.setLineSpacing(5);
+      actionLogText.setLineSpacing(1);
 
       // Add a visual effect to the log
       actionLogText.setAlpha(0.5);

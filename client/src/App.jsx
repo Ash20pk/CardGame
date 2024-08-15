@@ -6,32 +6,12 @@ import MainLP from './pages/MainLP';
 import HomePage from './pages/HomePage';
 import WaitingRoom from './components/WaitingRoom';
 import BattleArea from './components/BattleArea';
-import useWallet from './components/ConnectWallet'; 
-import bgMusic from '../public/assets/bgMusic.mp3'
+import { WalletProvider } from './components/ConnectWallet';
 
 function App() {
-  const [play, { stop }] = useSound(bgMusic, { 
-    loop: true,
-    volume: 0.5 // Adjust as needed
-  });
-  const [isConnected, setIsConnected] = useState(false);
-
-  useEffect(() => {
-    const isConnected = localStorage.getItem('walletConnected') === 'true';
-    setIsConnected(isConnected);
-    if (isConnected) {
-      console.log('playing')
-      play();
-    } else {
-      stop();
-    }
-    
-    // Cleanup function to stop the sound when component unmounts
-    return () => stop();
-  }, [isConnected]);
-
   return (
     <ChakraProvider>
+      <WalletProvider>
       <Router>
         <Routes>
           <Route path="/" element={<MainLP />} />
@@ -40,6 +20,7 @@ function App() {
           <Route path="/home" element={<HomePage />} />
         </Routes>
       </Router>
+      </WalletProvider>
     </ChakraProvider>
   );
 }

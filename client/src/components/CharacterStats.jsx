@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import CardBattleGame from '../artifacts/CardBattleGame.json';
-import useWallet from '../components/ConnectWallet';
+import {useWallet} from '../components/ConnectWallet';
 
 const gameContractAddress = process.env.VITE_GAME_CONTRACT
 
@@ -17,7 +17,7 @@ const CLASS_TO_ENUM = {
 export function useFetchCharacterStats() {
   const {signer} = useWallet()
 
-
+console.log(signer);
   const fetchCharacterStats = async (characterClass) => {
     if (!signer || !characterClass) {
       console.error("Contract, signer, or character class is missing");

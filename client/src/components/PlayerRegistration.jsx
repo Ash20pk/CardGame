@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import useWallet from '../components/ConnectWallet';
+import {useWallet} from '../components/ConnectWallet';
 import { Box, Button, Input, VStack, Text, Heading, useToast } from '@chakra-ui/react';
 import NFT from '../artifacts/CoreNFT.json';
 import { ethers } from 'ethers'

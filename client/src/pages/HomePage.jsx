@@ -4,7 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { ethers } from 'ethers';
 import CardBattleGame from '../artifacts/CardBattleGame.json';
 import NFT from '../artifacts/CoreNFT.json';
-import useWallet from '../components/ConnectWallet';
+import {useWallet} from '../components/ConnectWallet';
 import { useNavigate } from 'react-router-dom';
 import { useFetchCharacterStats } from '../components/CharacterStats';
 

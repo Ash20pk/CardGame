@@ -6,7 +6,7 @@ import BattleGame from './BattleGame';
 import CardBattleGame from '../artifacts/CardBattleGame.json';
 import { ethers } from 'ethers';
 import { useNavigate } from 'react-router-dom';
-import useWallet from '../components/ConnectWallet';
+import {useWallet} from '../components/ConnectWallet';
 
 
 const BattleArea = () => {

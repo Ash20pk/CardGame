@@ -274,7 +274,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 4 * scaleRatio
         }).setOrigin(0.5);
 
-        const logText = scene.add.text(0, -20, '', {
+        const logText = scene.add.text(0, 0, '', {
           fontSize: `${14 * scaleRatio}px`,
           fill: '#000',
           stroke: '#fff',

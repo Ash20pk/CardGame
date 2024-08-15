@@ -281,7 +281,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
           strokeThickness: 2 * scaleRatio,
           align: 'center',
           wordWrap: { width: 260 * scaleRatio },
-          lineSpacing: 20
+          lineSpacing: 5
         }).setOrigin(0.5);
       
         card.add([frame, battleLogText, logText]);
@@ -614,7 +614,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       const formattedLog = gameState.actionLog.join('\n\n\n\n');
       console.log(formattedLog);
       actionLogText.setText(formattedLog);
-      actionLogText.setLineSpacing(20);
+      actionLogText.setLineSpacing(5);
 
       // Add a visual effect to the log
       actionLogText.setAlpha(0.5);

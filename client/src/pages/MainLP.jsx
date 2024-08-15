@@ -1,7 +1,7 @@
 import React from 'react';
 import { VStack, Heading, Text, Button, Flex, Box, Container, Image } from '@chakra-ui/react';
 import PlayerRegistration from '../components/PlayerRegistration';
-import useWallet from '../components/ConnectWallet';
+import {useWallet} from '../components/ConnectWallet';
 
 function MainLP() {
     const {connectWallet, disconnectWallet, account, signer, isConnected} = useWallet();

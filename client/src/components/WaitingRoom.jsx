@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, VStack, Heading, Text, Button, useToast } from '@chakra-ui/react';
-import useWallet from '../components/ConnectWallet';
+import {useWallet} from '../components/ConnectWallet';
 
 const WaitingRoom = () => {
   const { battleId } = useParams();

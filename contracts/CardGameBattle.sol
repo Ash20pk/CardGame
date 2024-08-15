@@ -100,7 +100,7 @@ contract CardBattleGame is Ownable, EIP712 {
         Battle storage battle = battles[_battleId];
         require(!battle.resolved, "Battle already resolved");
         require(battle.player2 == address(0), "Battle already has a second player");
-        require(_player2 != address(0) && _player2 != battle.player1, "Invalid player2 address");
+        require(_player2 != address(0), "Invalid player2 address");
         require(nftCollection.ownerOf(_player1TokenId) == battle.player1, "Player1 must own the specified NFT");
         require(_winner == battle.player1 || _winner == _player2, "Invalid winner");
 

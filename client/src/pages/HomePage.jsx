@@ -19,7 +19,7 @@ function HomePage() {
     const [playerLevel, setPlayerLevel] = useState('');
     const [characterStats, setCharacterStats] = useState(null);
     const [currentSlide, setCurrentSlide] = useState(0);
-    const {connectWallet, disconnectWallet, account, signer, isConnected} = useWallet();
+    const {connectWallet, disconnectWallet, account, signer} = useWallet();
     const navigate = useNavigate();
     const fetchCharacterStats = useFetchCharacterStats();
 
@@ -247,7 +247,7 @@ function HomePage() {
       const battleData = {
         id: _battleID,
         player1: {name: playerName, address: _player1, tokenId: _player1TokenID, image: selectedNFT.image, class: selectedNFT.class, level: playerLevel.toString(), health: characterStats.baseHealth, mana: characterStats.baseMana },
-        player2: {address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: playerNFTs[0].tokenId, image: playerNFTs[0].image, health: player2stats.baseHealth, mana: player2stats.baseMana, class: playerNFTs[0].class},
+        player2: {name: 'Computer', address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: playerNFTs[0].tokenId, image: playerNFTs[0].image, health: player2stats.baseHealth, mana: player2stats.baseMana, class: playerNFTs[0].class},
         startTime: _startTime,
         status: 'ready'
       };
@@ -314,10 +314,28 @@ function HomePage() {
                         </InputGroup>
                         <SimpleGrid columns={[1, 2, 3]} spacing={4}>
                             {battles.map((battle, index) => (
-                                <Box key={index} borderWidth={1} borderRadius="lg" p={4} bg="gray.700">
-                                    <Text fontWeight="bold" mb={2}>{battle[0]}</Text>
-                                    <Button onClick={() => joinBattle(index+1, battle[1], battle[5].toString(), selectedNFT.tokenId)} colorScheme="yellow" width="100%">
-                                        Join Battle
+                                <Box 
+                                    key={index} 
+                                    borderWidth={1} 
+                                    borderRadius="lg" 
+                                    p={4} 
+                                    bg="gray.700"
+                                    opacity={battle.resolved ? 0.6 : 1}
+                                >
+                                    <Text 
+                                        fontWeight="bold" 
+                                        mb={2}
+                                        textDecoration={battle.resolved ? 'line-through' : 'none'}
+                                    >
+                                        {battle[0]}
+                                    </Text>
+                                    <Button 
+                                        onClick={() => joinBattle(index+1, battle[1], battle[5].toString(), selectedNFT.tokenId)} 
+                                        colorScheme="yellow" 
+                                        width="100%"
+                                        isDisabled={battle.resolved}
+                                    >
+                                        {battle.resolved ? 'Battle Ended' : 'Join Battle'}
                                     </Button>
                                 </Box>
                             ))}

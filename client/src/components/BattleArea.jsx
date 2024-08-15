@@ -19,6 +19,7 @@ const BattleArea = () => {
   const [expGained, setExpGained] = useState(0);
   const [currentXP, setCurrentXP] = useState(0);
   const [isBattleEnded, setIsBattleEnded] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
   const gameContainerRef = useRef(null);
   const navigate = useNavigate();
   const {provider, account } = useWallet();
@@ -73,6 +74,7 @@ const BattleArea = () => {
       // Battle was won
     const winner = winnerAddress === battleData.player1.address ? battleData.player1 : battleData.player2;
     const opponent = winnerAddress === battleData.player1.address ? battleData.player2 : battleData.player1;
+    console.log(winnerAddress);
     setWinner(winner);
     setOpponent(opponent);
     setExpGained(expGained);
@@ -80,6 +82,7 @@ const BattleArea = () => {
   
     try {
       // Prepare the data for signing
+      setIsResolving(true);
       const domain = {
         name: "CardBattleGame",
         version: "1",
@@ -132,10 +135,11 @@ const BattleArea = () => {
       await tx.wait();
       localStorage.removeItem(`battle_${battleId}`)
       localStorage.removeItem(`battleGame_${battleId}`)
-      
+      setIsResolving(false);
       console.log("Battle resolved successfully");
     } catch (error) {
       console.error("Error resolving battle:", error);
+      setIsResolving(false);
     } 
   }
 }
@@ -269,6 +273,8 @@ const BattleArea = () => {
                 onClick={() => {setIsModalOpen(false); navigate('/home');}}
                 _hover={{ bg: "yellow.500" }}
                 transition="all 0.2s"
+                loadingText="Resolving Battle..."
+                isLoading={isResolving}
               >
                 Continue
               </Button>

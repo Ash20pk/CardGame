@@ -27,6 +27,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     let actionButtons;
     let turnText, actionLogText;
     let animationLayer;
+    let endGameButton;
 
     const classes = {
         Barbarian: {
@@ -107,6 +108,9 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       
         player1Card = createPlayerCard(this, width * 0.25, height * 0.5, gameState.player1, 'player1_image', scaleRatio);
         player2Card = createPlayerCard(this, width * 0.75, height * 0.5, gameState.player2, 'player2_image', scaleRatio);
+
+        // Add end game button
+        endGameButton = createEndGameButton(this, width, height, scaleRatio);
         
         turnText = createTurnText(this, width, height, scaleRatio);
         actionLogText = createActionLogCard(this, width * 0.5, height * 0.5, scaleRatio);
@@ -153,7 +157,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
             shield: 0,
             class: classes[player2.class],
             cooldowns: (classes[player2.class])?.powers.map(() => 0),
-            name: isComputerOpponent ? "Computer" : player2.name
+            // name: isComputerOpponent ? "Computer" : player2.name
           },
           currentTurn: 1,
           turnPlayer: 'player1',
@@ -171,7 +175,6 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       }
 
       function createPlayerCard(scene, x, y, player, imageKey, scaleRatio) {
-        console.log(player);
 
         const card = scene.add.container(x, y);
         const frame = scene.add.image(0, 0, 'card_frame').setScale(0.8 * scaleRatio);
@@ -344,6 +347,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
       }
     }
 
+
     function executeAction(power, attacker, defender, powerIndex) {
       if (attacker.mana < power.manaCost || attacker.cooldowns[powerIndex] > 0) return;
 
@@ -477,7 +481,7 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
         endTurn();
         return;
       }
-    
+
       const randomAction = availableActions[Math.floor(Math.random() * availableActions.length)];
       const powerIndex = playerClass.powers.indexOf(randomAction);
       executeAction(randomAction, gameState.player2, gameState.player1, powerIndex);
@@ -507,6 +511,35 @@ const BattleGame = ({ battleId, player1, player2, isComputerOpponent, onBattleEn
     function replenishMana() {
       gameState.player1.mana = Math.min(10, gameState.player1.mana + 1);
       gameState.player2.mana = Math.min(10, gameState.player2.mana + 1);
+    }
+
+    function createEndGameButton(scene, width, height, scaleRatio) {
+      const button = scene.add.text(
+        width * 0.95,
+        height * 0.05,
+        'End Game',
+        {
+          fontSize: `${24 * scaleRatio}px`,
+          fill: '#fff',
+          stroke: '#000',
+          strokeThickness: 3 * scaleRatio,
+          backgroundColor: '#ff0000',
+          padding: { x: 8 * scaleRatio, y: 4 * scaleRatio }
+        }
+      ).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+
+      button.on('pointerdown', handleEndGame);
+      return button;
+    }
+
+    function handleEndGame() {
+      // Determine the winner based on remaining health
+      const winner = gameState.player1.health > gameState.player2.health ? player1.address : player2.address;
+      // Call the onBattleEnd function with the determined winner
+      onBattleEnd(battleId, winner, 50);
+      
+      // Destroy the game
+      game.destroy(true);
     }
 
     function updateUI() {

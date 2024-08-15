@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 
 export default function useWallet() {
   const [signer, setSigner] = useState(null);
+  const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState("");
   const [isConnected, setIsConnected] = useState(false);
 
@@ -16,6 +17,7 @@ export default function useWallet() {
         setAccount(accounts[0]);
         setSigner(signer);
         setIsConnected(true);
+        setProvider(provider);
         localStorage.setItem('walletConnected', 'true');
       } catch (error) {
         console.error("User denied account access", error);
@@ -68,5 +70,5 @@ export default function useWallet() {
     };
   }, [checkConnection, disconnectWallet]);
 
-  return { connectWallet, disconnectWallet, signer, account, isConnected };
+  return { connectWallet, disconnectWallet, signer, provider, account, isConnected };
 }

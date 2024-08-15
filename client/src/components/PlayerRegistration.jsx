@@ -72,6 +72,7 @@ function PlayerRegistration() {
     }
 
     try {
+      setIsLoading(true);
       const tx = await gameContract.registerPlayer(playerName);
       await tx.wait();
       toast({
@@ -82,6 +83,7 @@ function PlayerRegistration() {
         isClosable: true,
       });
       navigate('/home');
+      setIsLoading(false);
     } catch (error) {
       console.error("Error registering player:", error);
       toast({
@@ -91,11 +93,14 @@ function PlayerRegistration() {
         duration: 5000,
         isClosable: true,
       });
+      setIsLoading(false);
     }
   };
 
   if (isLoading) {
-    return <Box textAlign="center" mt={10}>Loading...</Box>;
+    return <Box textAlign="center" mt={10}>
+      <Heading size="xl" color="yellow.300" textAlign="center">Loading...</Heading>
+    </Box>;
   }
 
   if (isRegistered) {
@@ -137,6 +142,8 @@ function PlayerRegistration() {
               onClick={registerPlayer} 
               colorScheme="yellow" 
               size="lg"
+              loadingText="Registering..."
+              isLoading={isLoading}
             >
               Register
             </Button>

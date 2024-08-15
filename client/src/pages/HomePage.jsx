@@ -153,7 +153,7 @@ function HomePage() {
   }, [account]);
 
   const CharacterStats = async () => {
-  fetchCharacterStats(selectedNFT.class).then(stats => {
+  fetchCharacterStats(selectedNFT?.class).then(stats => {
     if (stats) {
       setCharacterStats(stats);
     }
@@ -230,12 +230,15 @@ function HomePage() {
             return;
         }
         try {
+            setIsLoading(true);
             const tx = await gameContract.registerBattle(newBattleName);
             await tx.wait();
             setNewBattleName(''); 
             fetchBattles();
+            setIsLoading(false);
         } catch (error) {
             console.error("Error creating battle:", error);
+            setIsLoading(false);
         }
     };
 
@@ -244,7 +247,7 @@ function HomePage() {
       const battleData = {
         id: _battleID,
         player1: {name: playerName, address: _player1, tokenId: _player1TokenID, image: selectedNFT.image, class: selectedNFT.class, level: playerLevel.toString(), health: characterStats.baseHealth, mana: characterStats.baseMana },
-        player2: {address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: null, image: playerNFTs[0].image, health: player2stats.baseHealth, mana: player2stats.baseMana, class: playerNFTs[0].class},
+        player2: {address: "0xEfC315AEbEe513b9E6963C997D18C4d79830D6d1", tokenId: playerNFTs[0].tokenId, image: playerNFTs[0].image, health: player2stats.baseHealth, mana: player2stats.baseMana, class: playerNFTs[0].class},
         startTime: _startTime,
         status: 'ready'
       };
@@ -278,7 +281,7 @@ function HomePage() {
                         </Box>
 
                         <Box bg="rgba(0,0,0,0.7)" p={6} borderRadius="lg" boxShadow="dark-lg">
-                            <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Champion Stats({selectedNFT.class})</Heading>
+                            <Heading size="lg" mb={4} fontFamily="'Cinzel', serif" color="yellow.200">Champion Stats({selectedNFT?.class})</Heading>
                             {characterStats ? (
                                 <>
                                     <StatBar label="HP" value={characterStats.baseHealth} max={120} color="green" />
@@ -304,7 +307,7 @@ function HomePage() {
                                 bg="gray.700"
                             />
                             <InputRightElement width="4.5rem">
-                                <Button h="1.75rem" size="lg" p={5} onClick={createBattle} colorScheme="green">
+                                <Button h="1.75rem" size="lg" p={5} onClick={createBattle} colorScheme="green" isLoading={isLoading}>
                                     Create
                                 </Button>
                             </InputRightElement>

@@ -68,10 +68,6 @@ function MainLP() {
                         </VStack>
                     </Container>
                 </Flex>
-
-                <Box as="footer" textAlign="center" p={4} bg="rgba(0,0,0,0.7)" color="white">
-                    <Text>&copy; 2023 Block Quest. All rights reserved.</Text>
-                </Box>
             </Flex>
         </Box>
     );

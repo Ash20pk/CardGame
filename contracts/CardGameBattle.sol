@@ -45,9 +45,7 @@ contract CardBattleGame is Ownable, EIP712 {
         bool resolved;
     }
 
-    bytes32 private constant RESOLVE_BATTLE_TYPEHASH = keccak256("ResolveBattle(bytes32 battleId,address player,address opponent,uint256 playerTokenId,uint256 opponentTokenId,address winner,uint256 winnerExp,uint256 loserExp)");
-    uint256 public totalBattle;
-
+    bytes32 private constant RESOLVE_BATTLE_TYPEHASH = keccak256("ResolveBattle(uint256 battleId,address _player2,bool isComputer,uint256 _player1TokenId,uint256 _player2TokenId,address _winner,uint256 _winnerExp,uint256 _loserExp)");    uint256 public totalBattle;
     mapping(address => Player) public players;
     mapping(uint256 => Battle) public battles;
 
@@ -89,6 +87,7 @@ contract CardBattleGame is Ownable, EIP712 {
     function resolveBattle(
         uint256 _battleId,
         address _player2,
+        bool isComputer,
         uint256 _player1TokenId,
         uint256 _player2TokenId,
         address _winner,
@@ -103,10 +102,13 @@ contract CardBattleGame is Ownable, EIP712 {
         require(battle.player2 == address(0), "Battle already has a second player");
         require(_player2 != address(0) && _player2 != battle.player1, "Invalid player2 address");
         require(nftCollection.ownerOf(_player1TokenId) == battle.player1, "Player1 must own the specified NFT");
-        require(nftCollection.ownerOf(_player2TokenId) == _player2, "Player2 must own the specified NFT");
         require(_winner == battle.player1 || _winner == _player2, "Invalid winner");
 
-        bytes32 structHash = keccak256(abi.encode(RESOLVE_BATTLE_TYPEHASH, _battleId, _player2, _player1TokenId, _player2TokenId, _winner, _winnerExp, _loserExp));
+        if(!isComputer){
+            require(nftCollection.ownerOf(_player2TokenId) == _player2, "Player2 must own the specified NFT");
+        }
+
+        bytes32 structHash = keccak256(abi.encode(RESOLVE_BATTLE_TYPEHASH, _battleId, _player2, isComputer, _player1TokenId, _player2TokenId, _winner, _winnerExp, _loserExp));
         bytes32 hash = _hashTypedDataV4(structHash);
         require(ecrecover(hash, v, r, s) == owner(), "Invalid signature");
 

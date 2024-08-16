@@ -4,7 +4,13 @@ import PlayerRegistration from '../components/PlayerRegistration';
 import {useWallet} from '../components/ConnectWallet';
 
 function MainLP() {
-    const {connectWallet, disconnectWallet, account, signer, isConnected} = useWallet();
+    const {connectWallet, disconnectWallet, account, signer, switchNetwork, isConnected} = useWallet();
+
+
+    const handleConnect = () => {
+        switchNetwork();
+        connectWallet();
+    }
 
     return (
         <Box 
@@ -38,7 +44,7 @@ function MainLP() {
                                 <Button onClick={disconnectWallet} colorScheme="red" size="sm">Disconnect</Button>
                             </Flex>
                         ) : (
-                            <Button onClick={connectWallet} colorScheme="blue" size="sm">Connect Wallet</Button>
+                            <Button onClick={handleConnect} colorScheme="blue" size="sm">Connect Wallet</Button>
                         )}
                     </Box>
                 </Flex>
@@ -58,7 +64,7 @@ function MainLP() {
                                     <Text fontSize="xl" mb={6} color="white">
                                         Embark on an epic blockchain adventure. Connect your wallet to begin your journey.
                                     </Text>
-                                    <Button onClick={connectWallet} colorScheme="blue" size="lg">
+                                    <Button onClick={handleConnect} colorScheme="blue" size="lg">
                                         Start Your Adventure
                                     </Button>
                                 </Box>

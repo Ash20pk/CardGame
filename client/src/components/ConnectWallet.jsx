@@ -15,6 +15,34 @@ export function WalletProvider({ children }) {
     volume: 0.5 // Adjust this value as needed
   });
 
+  const switchNetwork = async () => {
+    const hexChainId = '0x45b';
+    try {
+
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: hexChainId }],
+      });
+    } catch (error) {
+      if ((error)?.code === 4902) { // 4902 - chain not added
+        window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: '0x45b',
+            rpcUrls: ['https://rpc.test.btcs.network'],
+            chainName: 'Core Testnet',
+            nativeCurrency: {
+              name: "tCORE",
+              symbol: "tCORE",
+              decimals: 18
+            },
+            blockExplorerUrls: 'https://scan.test.btcs.network'
+          }]
+        });
+      }
+    }
+  }
+
   const connectWallet = useCallback(async () => {
     if (window.ethereum) {
       try {
@@ -83,7 +111,7 @@ export function WalletProvider({ children }) {
   }, [checkConnection, disconnectWallet, play, stop]);
 
   return (
-    <WalletContext.Provider value={{ connectWallet, disconnectWallet, signer, provider, account, isConnected }}>
+    <WalletContext.Provider value={{ connectWallet, switchNetwork, disconnectWallet, signer, provider, account, isConnected }}>
       {children}
     </WalletContext.Provider>
   );

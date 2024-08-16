@@ -19,7 +19,7 @@ function HomePage() {
     const [playerLevel, setPlayerLevel] = useState('');
     const [characterStats, setCharacterStats] = useState(null);
     const [currentSlide, setCurrentSlide] = useState(0);
-    const {connectWallet, disconnectWallet, account, signer} = useWallet();
+    const {connectWallet, disconnectWallet, switchNetwork, account, signer} = useWallet();
     const navigate = useNavigate();
     const fetchCharacterStats = useFetchCharacterStats();
 
@@ -49,6 +49,11 @@ function HomePage() {
       if (!isPlayer) {
         navigate('/');
       }
+    }
+
+    const handleConnect = async () => {
+        await switchNetwork();
+        connectWallet();
     }
 
     const tokenIDtoMetadata = async (tokenID) => {
@@ -266,7 +271,7 @@ function HomePage() {
                         <Button onClick={disconnectWallet} colorScheme="red" size="lg">Disconnect</Button>
                     </Flex>
                 ) : (
-                    <Button onClick={connectWallet} colorScheme="blue" size="lg">Connect Wallet</Button>
+                    <Button onClick={handleConnect} colorScheme="blue" size="lg">Connect Wallet</Button>
                 )}
             </Flex>
 
